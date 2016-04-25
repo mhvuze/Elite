@@ -41,4 +41,4 @@ After deploying the app, do the following:
 * No autostart for the service host application
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
 * Poor error handling/diagnostic ability, for instance when service is not running
-* VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish)
+* VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish). Download ENU pack from [here](https://www.microsoft.com/en-US/download/details.aspx?id=48157)
