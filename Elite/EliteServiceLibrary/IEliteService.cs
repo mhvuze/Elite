@@ -9,12 +9,12 @@ namespace EliteServiceLibrary
     [ServiceContract]
     public interface IEliteService
     {
-        [WebInvoke(UriTemplate = "SendKeyDown?virtualKey={virtualKey}", Method = "POST")]
+        [WebInvoke(UriTemplate = "SendKeyDown?virtualKey={virtualKey}?virtualKey={modKey}", Method = "POST")]
         [OperationContract(IsOneWay = true)]
-        void SendKeyDown(ushort virtualKey);
+        void SendKeyDown(ushort virtualKey, ushort modKey);
 
-        [WebInvoke(UriTemplate = "SendKeyUp?virtualKey={virtualKey}", Method = "POST")]
+        [WebInvoke(UriTemplate = "SendKeyUp?virtualKey={virtualKey}?virtualKey={modKey}", Method = "POST")]
         [OperationContract(IsOneWay = true)]
-        void SendKeyUp(ushort virtualKey);
+        void SendKeyUp(ushort virtualKey, ushort modKey);
     }
 }

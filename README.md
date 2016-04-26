@@ -4,6 +4,13 @@ This is a hacky workaround for mapping the Elite Controller paddles to keys. Thi
 
 Since I ran into a bunch of issues during deployment (Exitcode, appx not building etc), I decided to push my minor changes and instructions to this fork. Maybe somebody will find it useful.
 
+Thanks to added modifier support this also works for Shadowplay etc. now :)
+
+### Changes to original
+* Deployment script splitted due to .NET-sided issues
+* Support for modifier keys (hardcoded right now; TODO: Add UI buttons)
+* Configuration file with auto-save and auto-load (only writing right now; TODO: Fixup)
+
 ### Prerequisites
 * Xbox Elite Controller
 * Xbox Accessories App

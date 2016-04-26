@@ -19,10 +19,10 @@ namespace EliteUi.EliteServiceReference {
     public interface IEliteService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IEliteService/SendKeyDown")]
-        System.Threading.Tasks.Task SendKeyDownAsync(ushort virtualKey);
+        System.Threading.Tasks.Task SendKeyDownAsync(ushort virtualKey, ushort modKey);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IEliteService/SendKeyUp")]
-        System.Threading.Tasks.Task SendKeyUpAsync(ushort virtualKey);
+        System.Threading.Tasks.Task SendKeyUpAsync(ushort virtualKey, ushort modKey);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -68,12 +68,12 @@ namespace EliteUi.EliteServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public System.Threading.Tasks.Task SendKeyDownAsync(ushort virtualKey) {
-            return base.Channel.SendKeyDownAsync(virtualKey);
+        public System.Threading.Tasks.Task SendKeyDownAsync(ushort virtualKey, ushort modKey) {
+            return base.Channel.SendKeyDownAsync(virtualKey, modKey);
         }
         
-        public System.Threading.Tasks.Task SendKeyUpAsync(ushort virtualKey) {
-            return base.Channel.SendKeyUpAsync(virtualKey);
+        public System.Threading.Tasks.Task SendKeyUpAsync(ushort virtualKey, ushort modKey) {
+            return base.Channel.SendKeyUpAsync(virtualKey, modKey);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync() {

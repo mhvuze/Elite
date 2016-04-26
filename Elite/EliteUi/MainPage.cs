@@ -39,6 +39,10 @@ namespace EliteUi
         string aux2_str;
         string aux3_str;
         string aux4_str;
+        string aux1_str_m;
+        string aux2_str_m;
+        string aux3_str_m;
+        string aux4_str_m;
 
         /// <summary>
         /// The service URI
@@ -86,6 +90,7 @@ namespace EliteUi
         /// The buttons which currently have mappings
         /// </summary>
         private IDictionary<GamepadButtons, VirtualKey> assignedButtons = new Dictionary<GamepadButtons, VirtualKey>();
+        private IDictionary<GamepadButtons, VirtualKey> assignedModButtons = new Dictionary<GamepadButtons, VirtualKey>();
 
         /// <summary>
         /// The currently pressed
@@ -287,10 +292,11 @@ namespace EliteUi
             foreach (var value in values.Where(v => (reading.Buttons & v) != 0))
             {
                 VirtualKey key;
-                if (this.assignedButtons.TryGetValue(value, out key) && !this.buttonsDown.Contains(value))
+                VirtualKey modKey;
+                if (this.assignedButtons.TryGetValue(value, out key) && this.assignedModButtons.TryGetValue(value, out modKey) && !this.buttonsDown.Contains(value))
                 {
                     this.buttonsDown.Add(value);
-                    this.SendKeyDown(key);
+                    this.SendKeyDown(key, modKey);
                 }
 
                 switch (reading.Buttons & value)
@@ -317,10 +323,11 @@ namespace EliteUi
                 if (this.buttonsDown.Contains(value))
                 {
                     VirtualKey key;
-                    if (this.assignedButtons.TryGetValue(value, out key))
+                    VirtualKey modKey;
+                    if (this.assignedButtons.TryGetValue(value, out key) && this.assignedModButtons.TryGetValue(value, out modKey))
                     {
                         this.buttonsDown.Add(value);
-                        this.SendKeyUp(key);
+                        this.SendKeyUp(key, modKey);
                     }
 
                     this.buttonsDown.Remove(value);
@@ -358,20 +365,20 @@ namespace EliteUi
         /// Sends a key down signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyDown(VirtualKey key)
+        private void SendKeyDown(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyDownAsync((ushort)key);
+            this.service.SendKeyDownAsync((ushort)key, (ushort)modKey);
         }
 
         /// <summary>
         /// Sends a key up signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyUp(VirtualKey key)
+        private void SendKeyUp(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyUpAsync((ushort)key);
+            this.service.SendKeyUpAsync((ushort)key, (ushort)modKey);
         }
 
         #endregion
@@ -564,6 +571,10 @@ namespace EliteUi
             if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = (assignedButtons[GamepadButtons.Aux2]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = VirtualKey.None.ToString(); }
             if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = (assignedButtons[GamepadButtons.Aux3]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = VirtualKey.None.ToString(); }
             if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = (assignedButtons[GamepadButtons.Aux4]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str_m = (assignedButtons[GamepadButtons.Aux1]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str_m = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str_m = (assignedButtons[GamepadButtons.Aux2]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str_m = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str_m = (assignedButtons[GamepadButtons.Aux3]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str_m = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str_m = (assignedButtons[GamepadButtons.Aux4]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str_m = VirtualKey.None.ToString(); }
         }
 
         // Writes button config to file
@@ -593,6 +604,10 @@ namespace EliteUi
                 aux2_str = ConfigReader.ReadLine();
                 aux3_str = ConfigReader.ReadLine();
                 aux4_str = ConfigReader.ReadLine();
+                aux1_str_m = ConfigReader.ReadLine();
+                aux2_str_m = ConfigReader.ReadLine();
+                aux3_str_m = ConfigReader.ReadLine();
+                aux4_str_m = ConfigReader.ReadLine();
             }
             catch { };
         }
@@ -602,12 +617,17 @@ namespace EliteUi
         {
             assignedButtons[GamepadButtons.Aux1] = VirtualKey.B;
             assignedButtons[GamepadButtons.Aux2] = VirtualKey.A;
-            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F9;
+            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F10;
             assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
+
+            assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.Menu;
+            assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
 
             aux1_button.Content = VirtualKey.B.ToString();
             aux2_button.Content = VirtualKey.A.ToString();
-            aux3_button.Content = VirtualKey.F9.ToString();
+            aux3_button.Content = VirtualKey.F10.ToString();
             aux4_button.Content = VirtualKey.F12.ToString();
         }
 

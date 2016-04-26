@@ -83,8 +83,17 @@ namespace EliteServiceLibrary
         /// Sends a key down signal to the OS.
         /// </summary>
         /// <param name="virtualKey">The virtual key.</param>
-        public void SendKeyDown(ushort virtualKey)
+        public void SendKeyDown(ushort virtualKey, ushort modifierKey)
         {
+            // Send modifier key
+            var scan2 = (ushort)MapVirtualKey(modifierKey, 0);
+            var keyboardFlags2 = KEYEVENTF.SCANCODE;
+            var keyboardInput2 = new KEYBDINPUT() { virtualKey = 0, scanCode = scan2, dwFlags = keyboardFlags2, time = 0, dwExtraInfo = IntPtr.Zero };
+            var wrapper2 = new InputUnion() { ki = keyboardInput2 };
+            var down2 = new INPUT() { type = InputType.KEYBOARD, U = wrapper2 };
+            SendInput(1, new INPUT[] { down2 }, INPUT.Size);
+
+            // Send actual key
             var scan = (ushort)MapVirtualKey(virtualKey, 0);
             var keyboardFlags = KEYEVENTF.SCANCODE;
             var keyboardInput = new KEYBDINPUT() { virtualKey = 0, scanCode = scan, dwFlags = keyboardFlags, time = 0, dwExtraInfo = IntPtr.Zero };
@@ -97,9 +106,18 @@ namespace EliteServiceLibrary
         /// Sends a key up signal to the OS.
         /// </summary>
         /// <param name="virtualKey">The virtual key.</param>
-        public void SendKeyUp(ushort virtualLKey)
+        public void SendKeyUp(ushort virtualKey, ushort modifierKey)
         {
-            var scan = (ushort)MapVirtualKey(virtualLKey, 0);
+            // Send modifier key
+            var scan2 = (ushort)MapVirtualKey(modifierKey, 0);
+            var keyboardFlags2 = KEYEVENTF.KEYUP | KEYEVENTF.SCANCODE;
+            var keyboardInput2 = new KEYBDINPUT() { virtualKey = 0, scanCode = scan2, dwFlags = keyboardFlags2, time = 0, dwExtraInfo = IntPtr.Zero };
+            var wrapper2 = new InputUnion() { ki = keyboardInput2 };
+            var up2 = new INPUT() { type = InputType.KEYBOARD, U = wrapper2 };
+            SendInput(1, new INPUT[] { up2 }, INPUT.Size);
+
+            // Send actual key
+            var scan = (ushort)MapVirtualKey(virtualKey, 0);
             var keyboardFlags = KEYEVENTF.KEYUP | KEYEVENTF.SCANCODE;
             var keyboardInput = new KEYBDINPUT() { virtualKey = 0, scanCode = scan, dwFlags = keyboardFlags, time = 0, dwExtraInfo = IntPtr.Zero };
             var wrapper = new InputUnion() { ki = keyboardInput };
