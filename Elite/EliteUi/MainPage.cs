@@ -21,6 +21,10 @@ namespace EliteUi
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
+    // my additions
+    using System.IO;
+    using Windows.Storage;
+    using Windows.Storage.Pickers;
     /// <summary>
     /// The non-generated part of the main application.
     /// </summary>
@@ -29,6 +33,13 @@ namespace EliteUi
     /// <seealso cref="Windows.UI.Xaml.Markup.IComponentConnector2" />
     public sealed partial class MainPage : Page
     {
+        StorageFolder appfolder;
+        StorageFile config;
+        string aux1_str;
+        string aux2_str;
+        string aux3_str;
+        string aux4_str;
+
         /// <summary>
         /// The service URI
         /// </summary>
@@ -147,6 +158,10 @@ namespace EliteUi
                     this.OnKeyDown(e.VirtualKey, false);
                 }
             };
+
+            // Load config if available
+            GetConfig();
+            // TODO: Actually forward values to UI
         }
 
         #endregion
@@ -537,6 +552,31 @@ namespace EliteUi
             {
                 enabled.IsEnabled = false;
             }
+        }
+
+        // Writes button config to file on exit
+        async private void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs args)
+        {
+            StorageFolder appfolder = ApplicationData.Current.LocalFolder;
+            StorageFile config = await appfolder.GetFileAsync("EliteUi.ini");
+
+            var writer = await config.OpenStreamForWriteAsync();
+            string[] paddles = { aux1_button.ToString(), aux2_button.ToString(), aux3_button.ToString(), aux4_button.ToString() };
+            using (StreamWriter ConfigWriter = new StreamWriter(writer)) { foreach (string line in paddles) ConfigWriter.WriteLine(line); }
+        }
+
+        // Read config file
+        async private void GetConfig()
+        {
+            StorageFolder appfolder = ApplicationData.Current.LocalFolder;
+            StorageFile config = await appfolder.GetFileAsync("EliteUi.ini");
+
+            var reader = await config.OpenStreamForReadAsync();
+            StreamReader ConfigReader = new StreamReader(reader);
+            aux1_str = ConfigReader.ReadLine();
+            aux2_str = ConfigReader.ReadLine();
+            aux3_str = ConfigReader.ReadLine();
+            aux4_str = ConfigReader.ReadLine();
         }
 
         #endregion
