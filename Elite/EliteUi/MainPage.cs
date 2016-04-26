@@ -24,7 +24,7 @@ namespace EliteUi
     // my additions
     using System.IO;
     using Windows.Storage;
-    using Windows.Storage.Pickers;
+
     /// <summary>
     /// The non-generated part of the main application.
     /// </summary>
@@ -161,7 +161,7 @@ namespace EliteUi
 
             // Load config if available
             GetConfig();
-            // TODO: Actually forward values to UI
+            PushKeys();
         }
 
         #endregion
@@ -554,29 +554,51 @@ namespace EliteUi
             }
         }
 
-        // Writes button config to file on exit
-        async private void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs args)
+        // Read assigned buttons
+        private void GetKeys()
         {
-            StorageFolder appfolder = ApplicationData.Current.LocalFolder;
-            StorageFile config = await appfolder.GetFileAsync("EliteUi.ini");
+            // TODO: Need to properly convert VKey to string...
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = assignedButtons[GamepadButtons.Aux1].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = "0"; }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = assignedButtons[GamepadButtons.Aux2].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = "0"; }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = assignedButtons[GamepadButtons.Aux3].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = "0"; }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = assignedButtons[GamepadButtons.Aux4].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = "0"; }
+        }
 
-            var writer = await config.OpenStreamForWriteAsync();
-            string[] paddles = { aux1_button.ToString(), aux2_button.ToString(), aux3_button.ToString(), aux4_button.ToString() };
-            using (StreamWriter ConfigWriter = new StreamWriter(writer)) { foreach (string line in paddles) ConfigWriter.WriteLine(line); }
+        // Writes button config to file on exit
+        async private void WriteConfig()
+        {
+            appfolder = ApplicationData.Current.LocalFolder;
+            try
+            {
+                config = await appfolder.CreateFileAsync("EliteUi.ini", CreationCollisionOption.ReplaceExisting);
+                var writer = await config.OpenStreamForWriteAsync();
+                string[] paddles = { aux1_str, aux2_str, aux3_str, aux4_str };
+                using (StreamWriter ConfigWriter = new StreamWriter(writer)) { foreach (string line in paddles) ConfigWriter.WriteLine(line); }
+            }
+            catch { };
         }
 
         // Read config file
         async private void GetConfig()
         {
-            StorageFolder appfolder = ApplicationData.Current.LocalFolder;
-            StorageFile config = await appfolder.GetFileAsync("EliteUi.ini");
+            appfolder = ApplicationData.Current.LocalFolder;
+            try
+            {
+                config = await appfolder.GetFileAsync("EliteUi.ini");
+                var reader = await config.OpenStreamForReadAsync();
+                StreamReader ConfigReader = new StreamReader(reader);
+                aux1_str = ConfigReader.ReadLine();
+                aux2_str = ConfigReader.ReadLine();
+                aux3_str = ConfigReader.ReadLine();
+                aux4_str = ConfigReader.ReadLine();
+            }
+            catch { };
+        }
 
-            var reader = await config.OpenStreamForReadAsync();
-            StreamReader ConfigReader = new StreamReader(reader);
-            aux1_str = ConfigReader.ReadLine();
-            aux2_str = ConfigReader.ReadLine();
-            aux3_str = ConfigReader.ReadLine();
-            aux4_str = ConfigReader.ReadLine();
+        // Push assigned keys
+        private void PushKeys()
+        {
+            // TODO
         }
 
         #endregion
