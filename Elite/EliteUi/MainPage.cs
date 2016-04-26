@@ -503,6 +503,8 @@ namespace EliteUi
                 this.EnableButtons();
                 this.deferringClear = false;
             }
+            GetKeys();
+            WriteConfig();
         }
 
         /// <summary>
@@ -558,13 +560,13 @@ namespace EliteUi
         private void GetKeys()
         {
             // TODO: Need to properly convert VKey to string...
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = assignedButtons[GamepadButtons.Aux1].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = "0"; }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = assignedButtons[GamepadButtons.Aux2].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = "0"; }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = assignedButtons[GamepadButtons.Aux3].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = "0"; }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = assignedButtons[GamepadButtons.Aux4].ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = "0"; }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = (assignedButtons[GamepadButtons.Aux1]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = (assignedButtons[GamepadButtons.Aux2]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = (assignedButtons[GamepadButtons.Aux3]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = VirtualKey.None.ToString(); }
+            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = (assignedButtons[GamepadButtons.Aux4]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = VirtualKey.None.ToString(); }
         }
 
-        // Writes button config to file on exit
+        // Writes button config to file
         async private void WriteConfig()
         {
             appfolder = ApplicationData.Current.LocalFolder;
@@ -598,7 +600,15 @@ namespace EliteUi
         // Push assigned keys
         private void PushKeys()
         {
-            // TODO
+            assignedButtons[GamepadButtons.Aux1] = VirtualKey.B;
+            assignedButtons[GamepadButtons.Aux2] = VirtualKey.A;
+            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F9;
+            assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
+
+            aux1_button.Content = VirtualKey.B.ToString();
+            aux2_button.Content = VirtualKey.A.ToString();
+            aux3_button.Content = VirtualKey.F9.ToString();
+            aux4_button.Content = VirtualKey.F12.ToString();
         }
 
         #endregion
