@@ -10,6 +10,7 @@ Thanks to added modifier support this also works for Shadowplay etc. now :)
 * Deployment script splitted due to .NET-sided issues
 * Support for modifier keys (hardcoded right now; TODO: Add UI buttons)
 * Configuration file with auto-save and auto-load (only writing right now; TODO: Fixup)
+* Host now starts minimized to tray (TODO: Add to PowerShell script)
 
 ### Prerequisites
 * Xbox Elite Controller
@@ -53,4 +54,4 @@ After deploying the app, do the following:
 * Poor error handling/diagnostic ability, for instance when service is not running
 * VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish). Download ENU pack from [here](https://www.microsoft.com/en-US/download/details.aspx?id=48157)
 
-EliteUi icon based on [icon](http://www.flaticon.com/free-icon/xbox-one-wireless-control_37649) by Freepik.
+App icons based on [icon](http://www.flaticon.com/free-icon/xbox-one-wireless-control_37649) by Freepik.
