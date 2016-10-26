@@ -117,6 +117,9 @@ namespace EliteUi
         /// </summary>
         private bool deferringClear = false;
 
+        // Vibration
+        static bool isVibrationEnabled = false;
+
         #endregion
 
         #region Initialization
@@ -129,6 +132,7 @@ namespace EliteUi
             this.InitializeWindow();
             this.InitializeTimer();
             this.InitializeEvents();
+            isVibrationEnabled.Checked += combobox_Click;
         }
 
         /// <summary>
@@ -214,6 +218,60 @@ namespace EliteUi
 
                 this.WriteGamepadReadings(reading);
                 this.ProcessGamepadReadings(reading);
+
+                // Vibration
+                {
+                    // Vibrations
+                    Windows.Gaming.Input.Gamepad gamepad = Windows.Gaming.Input.Gamepad.Gamepads.First();
+                    Windows.Gaming.Input.GamepadVibration vibration;
+
+                    EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
+
+                    vibration.LeftMotor = 0.0;
+                    vibration.LeftTrigger = 0.0;
+                    vibration.RightMotor = 0.0;
+                    vibration.RightTrigger = 0.0;
+
+                    // Set the vibration
+                    // Left Trigger
+                    if (reading.LeftTrigger != 0.0)
+                    {
+                        if (isVibrationEnabled == true)
+                        {
+                            // Normalize our data base on the set interval
+                            double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
+
+                            // Set the vibration Based on the normalized value AND trigger scale factor!
+                            vibration.LeftTrigger = value * config.ScaleFactorLeftTriggerMotor / 100.0f;
+                            gamepad.Vibration = vibration;
+                        }
+                    }
+                    else
+                    {
+                        vibration.LeftTrigger = 0.0;
+                        gamepad.Vibration = vibration;
+                    }
+
+                    // Right Trigger
+                    if (reading.RightTrigger != 0.0)
+                    {
+                        if (isVibrationEnabled == true)
+                        {
+                            // Normalize our data base on the set interval
+                            double value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
+
+                            // Set the vibration Based on the normalized value AND trigger scale factor!
+                            vibration.RightTrigger = value * config.ScaleFactorRightTriggerMotor / 100.0f;
+                            gamepad.Vibration = vibration;
+                        }
+                    }
+                    else
+                    {
+                        vibration.RightTrigger = 0.0;
+                        gamepad.Vibration = vibration;
+                    }
+
+                }
             }
             catch (Exception)
             {
@@ -274,6 +332,28 @@ namespace EliteUi
 
             valueStringBuilder.AppendLine(reading.RightThumbstickY.ToString());
             propertyStringBuilder.AppendLine("RightThumbstickY:");
+
+            // Vibra values
+            EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
+            valueStringBuilder.AppendLine(config.LeftTrigger.Min.ToString());
+            propertyStringBuilder.AppendLine("LeftTriggerMin:");
+
+            valueStringBuilder.AppendLine(config.LeftTrigger.Max.ToString());
+            propertyStringBuilder.AppendLine("LeftTriggerMax:");
+
+            valueStringBuilder.AppendLine(config.RightTrigger.Min.ToString());
+            propertyStringBuilder.AppendLine("RightTriggerMin:");
+
+            valueStringBuilder.AppendLine(config.RightTrigger.Max.ToString());
+            propertyStringBuilder.AppendLine("RightTriggerMax:");
+
+            double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
+            valueStringBuilder.AppendLine(value.ToString());
+            propertyStringBuilder.AppendLine("VibrationValueLeft");
+
+            value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
+            valueStringBuilder.AppendLine(value.ToString());
+            propertyStringBuilder.AppendLine("VibrationValueRight");
 
             var task = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementId.Text = propertyStringBuilder.ToString(); }).AsTask();
             var task2 = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementValue.Text = valueStringBuilder.ToString(); }).AsTask();
@@ -384,6 +464,15 @@ namespace EliteUi
         #endregion
 
         #region UI events and handling
+
+        // Vibra combobox
+        public void combobox_Click(object sender, RoutedEventArgs e)
+        {
+            if (isVibrationEnabled)
+                isVibrationEnabled = false;
+            else
+                isVibrationEnabled = true;
+        }
 
         /// <summary>
         /// Handles the Click event of the aux1_button control.
@@ -561,6 +650,12 @@ namespace EliteUi
             {
                 enabled.IsEnabled = false;
             }
+        }
+
+        // Normalize trigger vibra
+        private double normalizeTriggerValue(double value, int min, int max)
+        {
+            return (value * 100 - min) / (max - min);
         }
 
         // Read assigned buttons

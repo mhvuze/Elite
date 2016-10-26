@@ -80,8 +80,8 @@
         </Style>
     </Page.Resources>
 
-    <RelativePanel Background="#107C10" MinWidth="320" MinHeight="400">
-        <Grid x:Name="ControllerConfiguration0" Background="#000000" MinHeight="220" Margin="0,10,0,10" MinWidth="320" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <RelativePanel Background="#107C10" MinWidth="320" MinHeight="400" Margin="0,0,0,-118" Width="321" Height="518">
+        <Grid x:Name="ControllerConfiguration0" Background="#000000" MinHeight="220" Margin="0,28,0,-18" MinWidth="320" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10"/>
                 <RowDefinition MinHeight="40"/>
@@ -116,23 +116,18 @@
                 <TextBlock Text="Bottom Right" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
         </Grid>
-        <Grid x:Name="ControllerReadings0" Background="#107C10" MinHeight="150" Margin="10,0,10,10" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" >
+        <Grid x:Name="ControllerReadings0" Background="#107C10" MinHeight="150" Margin="10,24,10,-290" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="120"/>
                 <ColumnDefinition MinWidth="180"/>
             </Grid.ColumnDefinitions>
-            <!--<Grid.RowDefinitions>
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-                <RowDefinition MinHeight="40" />
-            </Grid.RowDefinitions>-->
-            <TextBlock x:Name="measurementId" Grid.Column="0" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="20,10,10,10" />
-            <TextBlock x:Name="measurementValue" Grid.Column="1" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="10,10,20,10" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="7*"/>
+                <RowDefinition Height="225*"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="measurementId" Grid.Column="0" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="20,3,10,10" Grid.Row="1" />
+            <TextBlock x:Name="measurementValue" Grid.Column="1" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="10,3,20,10" Grid.Row="1" />
         </Grid>
+      <CheckBox x:Name="vibrationEnabled" Content="Enable  Trigger Vibration" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="228" Margin="43,-4,-151,0" FontSize="16" FontWeight="Bold" Foreground="White"/>
     </RelativePanel>
 </Page>

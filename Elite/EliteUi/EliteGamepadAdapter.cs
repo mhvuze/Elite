@@ -25,7 +25,8 @@ namespace EliteUi
         /// <summary>
         /// The gamepad
         /// </summary>
-        private EliteGamepad gamepad;
+        public EliteGamepad gamepad;
+        public EliteGamepadConfiguration configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EliteGamepadAdapter"/> class.
@@ -36,6 +37,7 @@ namespace EliteUi
             this.gamepad = gamepad;
             this.gamepadId = gamepad.FriendlyName;
             this.IsReady = true;
+            this.configuration = gamepad.GetConfiguration(this.CurrentSlotId);
 
             // Should make this disposable so they get removed, but it should never be a problem unless somebody is being naughty or ambitious :)
             EliteGamepad.EliteGamepadAdded += (sender, data) =>

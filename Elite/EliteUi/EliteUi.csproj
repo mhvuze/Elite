@@ -152,22 +152,22 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DevicesApp.PlatformAbstraction">
-      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1512.2007.0_x64__8wekyb3d8bbwe\DevicesApp.PlatformAbstraction.winmd</HintPath>
+      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1608.16000.0_x64__8wekyb3d8bbwe\DevicesApp.PlatformAbstraction.winmd</HintPath>
       <Implementation>PlatformAbstraction.dll</Implementation>
     </Reference>
     <Reference Include="GamepadManagement, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1512.2007.0_x64__8wekyb3d8bbwe\GamepadManagement.winmd</HintPath>
+      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1608.16000.0_x64__8wekyb3d8bbwe\GamepadManagement.winmd</HintPath>
       <Implementation>GamepadManagement.dll</Implementation>
     </Reference>
     <Reference Include="GamepadManagement.Extensibility, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1512.2007.0_x64__8wekyb3d8bbwe\GamepadManagement.Extensibility.winmd</HintPath>
+      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1608.16000.0_x64__8wekyb3d8bbwe\GamepadManagement.Extensibility.winmd</HintPath>
       <Implementation>GamepadManagement.dll</Implementation>
     </Reference>
     <Reference Include="GamepadManagement.Internal, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1512.2007.0_x64__8wekyb3d8bbwe\GamepadManagement.Internal.winmd</HintPath>
+      <HintPath>C:\Program Files\WindowsApps\Microsoft.XboxDevices_100.1608.16000.0_x64__8wekyb3d8bbwe\GamepadManagement.Internal.winmd</HintPath>
       <Implementation>GamepadManagement.dll</Implementation>
     </Reference>
   </ItemGroup>
