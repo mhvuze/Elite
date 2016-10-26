@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Xbox One - Elite Controller Peddle Config")]
+[assembly: AssemblyTitle("Xbox One - Elite Controller Paddle Config")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Helifax")]
-[assembly: AssemblyProduct("Xbox One - Elite Controller Peddle Config")]
+[assembly: AssemblyProduct("Xbox One - Elite Controller Paddle Config")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

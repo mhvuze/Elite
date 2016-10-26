@@ -32,6 +32,9 @@ namespace EliteUi
     /// <seealso cref="Windows.UI.Xaml.Markup.IComponentConnector2" />
     public sealed partial class MainPage : Page
     {
+        // variables
+        Windows.Storage.StorageFolder configFolder = Windows.Storage.ApplicationData.Current.LocalFolder;        
+
         /// <summary>
         /// The service URI
         /// </summary>
@@ -127,10 +130,10 @@ namespace EliteUi
         /// </summary>
         private void InitializeWindow()
         {
-            ApplicationView.PreferredLaunchViewSize = new Size { Height = 400, Width = 320 };
+            ApplicationView.PreferredLaunchViewSize = new Size { Height = 550, Width = 430 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 400, Width = 320 });
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 400, Width = 320 });
+            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 550, Width = 430 });
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 550, Width = 430 });
 
             // Config keys
             PushKeysToUI();
@@ -451,6 +454,53 @@ namespace EliteUi
 
         #region UI events and handling
 
+        // Push assigned keys
+        private void PushKeysToUI()
+        {
+            assignedButtons[GamepadButtons.Aux1] = VirtualKey.None;
+            assignedButtons[GamepadButtons.Aux2] = VirtualKey.None;
+            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F10;
+            assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
+
+            assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
+
+            aux1_button.Content = VirtualKey.None.ToString();
+            aux2_button.Content = VirtualKey.None.ToString();
+            aux3_button.Content = VirtualKey.F10.ToString();
+            aux4_button.Content = VirtualKey.F12.ToString();
+        }
+
+        // Save config
+        private async void buttonSave_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync("elite_config.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            await Windows.Storage.FileIO.WriteTextAsync(configFile,
+                ((ushort)assignedButtons[GamepadButtons.Aux1]).ToString() + "\n" +
+                ((ushort)assignedButtons[GamepadButtons.Aux2]).ToString() + "\n" +
+                ((ushort)assignedButtons[GamepadButtons.Aux3]).ToString() + "\n" +
+                ((ushort)assignedButtons[GamepadButtons.Aux4]).ToString() + "\n" +
+
+                ((ushort)assignedModButtons[GamepadButtons.Aux1]).ToString() + "\n" +
+                ((ushort)assignedModButtons[GamepadButtons.Aux2]).ToString() + "\n" +
+                ((ushort)assignedModButtons[GamepadButtons.Aux3]).ToString() + "\n" +
+                ((ushort)assignedModButtons[GamepadButtons.Aux4]).ToString()
+                );
+
+            // Perhaps it would be easier to just write a binary file?
+        }
+
+        // Reload config
+        private async void buttonReload_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.txt");
+
+            // TODO: Read and use values
+        }
+
+        // Vibration checkbox
         public void combobox_Click(object sender, RoutedEventArgs e)
         {
             if (isVibrationEnabled)
@@ -640,26 +690,6 @@ namespace EliteUi
         {
             return (value * 100 - min) / (max - min);
         }
-
-        // Push assigned keys
-        private void PushKeysToUI()
-        {
-            assignedButtons[GamepadButtons.Aux1] = VirtualKey.B;
-            assignedButtons[GamepadButtons.Aux2] = VirtualKey.A;
-            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F10;
-            assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
-
-            assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
-            assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
-            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.Menu;
-            assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
-
-            aux1_button.Content = VirtualKey.B.ToString();
-            aux2_button.Content = VirtualKey.A.ToString();
-            aux3_button.Content = VirtualKey.F10.ToString();
-            aux4_button.Content = VirtualKey.F12.ToString();
-        }
-
         #endregion
     }
 }
