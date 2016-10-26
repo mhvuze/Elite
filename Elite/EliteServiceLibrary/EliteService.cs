@@ -106,7 +106,7 @@ namespace EliteServiceLibrary
         /// Sends a key up signal to the OS.
         /// </summary>
         /// <param name="virtualKey">The virtual key.</param>
-        public void SendKeyUp(ushort virtualKey, ushort modifierKey)
+        public void SendKeyUp(ushort virtualLKey, ushort modifierKey)
         {
             // Send modifier key
             var scan2 = (ushort)MapVirtualKey(modifierKey, 0);
@@ -117,7 +117,7 @@ namespace EliteServiceLibrary
             SendInput(1, new INPUT[] { up2 }, INPUT.Size);
 
             // Send actual key
-            var scan = (ushort)MapVirtualKey(virtualKey, 0);
+            var scan = (ushort)MapVirtualKey(virtualLKey, 0);
             var keyboardFlags = KEYEVENTF.KEYUP | KEYEVENTF.SCANCODE;
             var keyboardInput = new KEYBDINPUT() { virtualKey = 0, scanCode = scan, dwFlags = keyboardFlags, time = 0, dwExtraInfo = IntPtr.Zero };
             var wrapper = new InputUnion() { ki = keyboardInput };

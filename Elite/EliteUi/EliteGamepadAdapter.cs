@@ -26,6 +26,7 @@ namespace EliteUi
         /// The gamepad
         /// </summary>
         public EliteGamepad gamepad;
+
         public EliteGamepadConfiguration configuration;
 
         /// <summary>

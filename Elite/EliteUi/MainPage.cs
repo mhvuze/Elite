@@ -21,9 +21,8 @@ namespace EliteUi
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
 
-    // my additions
+    // added
     using System.IO;
-    using Windows.Storage;
 
     /// <summary>
     /// The non-generated part of the main application.
@@ -33,17 +32,6 @@ namespace EliteUi
     /// <seealso cref="Windows.UI.Xaml.Markup.IComponentConnector2" />
     public sealed partial class MainPage : Page
     {
-        StorageFolder appfolder;
-        StorageFile config;
-        string aux1_str;
-        string aux2_str;
-        string aux3_str;
-        string aux4_str;
-        string aux1_str_m;
-        string aux2_str_m;
-        string aux3_str_m;
-        string aux4_str_m;
-
         /// <summary>
         /// The service URI
         /// </summary>
@@ -117,7 +105,6 @@ namespace EliteUi
         /// </summary>
         private bool deferringClear = false;
 
-        // Vibration
         static bool isVibrationEnabled = false;
 
         #endregion
@@ -132,7 +119,7 @@ namespace EliteUi
             this.InitializeWindow();
             this.InitializeTimer();
             this.InitializeEvents();
-            isVibrationEnabled.Checked += combobox_Click;
+            vibrationEnabled.Checked += combobox_Click;
         }
 
         /// <summary>
@@ -144,6 +131,9 @@ namespace EliteUi
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 400, Width = 320 });
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 400, Width = 320 });
+
+            // Config keys
+            PushKeysToUI();
         }
 
         /// <summary>
@@ -167,10 +157,6 @@ namespace EliteUi
                     this.OnKeyDown(e.VirtualKey, false);
                 }
             };
-
-            // Load config if available
-            GetConfig();
-            PushKeys();
         }
 
         #endregion
@@ -219,7 +205,7 @@ namespace EliteUi
                 this.WriteGamepadReadings(reading);
                 this.ProcessGamepadReadings(reading);
 
-                // Vibration
+                
                 {
                     // Vibrations
                     Windows.Gaming.Input.Gamepad gamepad = Windows.Gaming.Input.Gamepad.Gamepads.First();
@@ -270,7 +256,7 @@ namespace EliteUi
                         vibration.RightTrigger = 0.0;
                         gamepad.Vibration = vibration;
                     }
-
+                    
                 }
             }
             catch (Exception)
@@ -333,7 +319,7 @@ namespace EliteUi
             valueStringBuilder.AppendLine(reading.RightThumbstickY.ToString());
             propertyStringBuilder.AppendLine("RightThumbstickY:");
 
-            // Vibra values
+            // Config values
             EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
             valueStringBuilder.AppendLine(config.LeftTrigger.Min.ToString());
             propertyStringBuilder.AppendLine("LeftTriggerMin:");
@@ -465,7 +451,6 @@ namespace EliteUi
 
         #region UI events and handling
 
-        // Vibra combobox
         public void combobox_Click(object sender, RoutedEventArgs e)
         {
             if (isVibrationEnabled)
@@ -599,8 +584,6 @@ namespace EliteUi
                 this.EnableButtons();
                 this.deferringClear = false;
             }
-            GetKeys();
-            WriteConfig();
         }
 
         /// <summary>
@@ -652,63 +635,14 @@ namespace EliteUi
             }
         }
 
-        // Normalize trigger vibra
+        // Normalize the value in the specified interval
         private double normalizeTriggerValue(double value, int min, int max)
         {
             return (value * 100 - min) / (max - min);
         }
 
-        // Read assigned buttons
-        private void GetKeys()
-        {
-            // TODO: Need to properly convert VKey to string...
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = (assignedButtons[GamepadButtons.Aux1]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = (assignedButtons[GamepadButtons.Aux2]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = (assignedButtons[GamepadButtons.Aux3]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = (assignedButtons[GamepadButtons.Aux4]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str_m = (assignedButtons[GamepadButtons.Aux1]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux1)) { aux1_str_m = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str_m = (assignedButtons[GamepadButtons.Aux2]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux2)) { aux2_str_m = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str_m = (assignedButtons[GamepadButtons.Aux3]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux3)) { aux3_str_m = VirtualKey.None.ToString(); }
-            if (assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str_m = (assignedButtons[GamepadButtons.Aux4]).ToString(); } else if (!assignedButtons.ContainsKey(GamepadButtons.Aux4)) { aux4_str_m = VirtualKey.None.ToString(); }
-        }
-
-        // Writes button config to file
-        async private void WriteConfig()
-        {
-            appfolder = ApplicationData.Current.LocalFolder;
-            try
-            {
-                config = await appfolder.CreateFileAsync("EliteUi.ini", CreationCollisionOption.ReplaceExisting);
-                var writer = await config.OpenStreamForWriteAsync();
-                string[] paddles = { aux1_str, aux2_str, aux3_str, aux4_str };
-                using (StreamWriter ConfigWriter = new StreamWriter(writer)) { foreach (string line in paddles) ConfigWriter.WriteLine(line); }
-            }
-            catch { };
-        }
-
-        // Read config file
-        async private void GetConfig()
-        {
-            appfolder = ApplicationData.Current.LocalFolder;
-            try
-            {
-                config = await appfolder.GetFileAsync("EliteUi.ini");
-                var reader = await config.OpenStreamForReadAsync();
-                StreamReader ConfigReader = new StreamReader(reader);
-                aux1_str = ConfigReader.ReadLine();
-                aux2_str = ConfigReader.ReadLine();
-                aux3_str = ConfigReader.ReadLine();
-                aux4_str = ConfigReader.ReadLine();
-                aux1_str_m = ConfigReader.ReadLine();
-                aux2_str_m = ConfigReader.ReadLine();
-                aux3_str_m = ConfigReader.ReadLine();
-                aux4_str_m = ConfigReader.ReadLine();
-            }
-            catch { };
-        }
-
         // Push assigned keys
-        private void PushKeys()
+        private void PushKeysToUI()
         {
             assignedButtons[GamepadButtons.Aux1] = VirtualKey.B;
             assignedButtons[GamepadButtons.Aux2] = VirtualKey.A;

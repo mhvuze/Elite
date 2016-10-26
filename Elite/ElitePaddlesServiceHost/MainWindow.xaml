@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ElitePaddlesServiceHost"
         mc:Ignorable="d"
-        Title="ElitePaddles Service Host" Height="85" Width="205" ResizeMode="CanMinimize">
+        Title="MainWindow" Height="80" Width="200">
     <Grid>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="15,10,0,0" TextWrapping="Wrap" Text="The service for ElitePaddles is being hosted. Minimize to hide." VerticalAlignment="Top"/>
 

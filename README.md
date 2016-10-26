@@ -1,16 +1,18 @@
-# Elite
+# Elite-Enhanced
+This is a fork of the original Elite Repository.
+I wanted to play with the Trigger Vibrations (since not a lot of games actually use them) I created this fork.
+Trigger vibrations USE the settings set by the Xbox Accessories Application. I also added a toggle to disable this override.
+Added a couple of icons as well.
+Plan is to make a Release as well so people don't have to build all this things but you can still do it.
+Copyright is to the companies responsible for the applications, libraries etc and in no way I claim otherwise.
 
-This is a hacky workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about saqneos experience creating the app, [visit his blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
+# ORIGINAL README AS FOLLOWS:
 
-Since I ran into a bunch of issues during deployment (Exitcode, appx not building etc), I decided to push my minor changes and instructions to this fork. Maybe somebody will find it useful.
+## Elite
 
-Thanks to added modifier support this also works for Shadowplay etc. now :)
+This is a hacky workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about my experience creating the app, [visit my blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
 
-### Changes to original
-* Deployment script splitted due to .NET-sided issues
-* Support for modifier keys (hardcoded right now; TODO: Add UI buttons)
-* Configuration file with auto-save and auto-load (only writing right now; TODO: Fixup)
-* Host now starts minimized to tray (TODO: Add to PowerShell script)
+A helpful redditor put together [a more friendly set of instructions](https://www.reddit.com/r/xboxone/comments/468wv0/workaround_for_mapping_xbox_elite_controller/d45htf6) that I would recommend trying if these don't work. Thanks u/saviorbk!
 
 ### Prerequisites
 * Xbox Elite Controller
@@ -23,20 +25,19 @@ Thanks to added modifier support this also works for Shadowplay etc. now :)
 1. Download and extract the package
 2. Download the nuget command-line utility (https://docs.nuget.org/consume/installing-nuget)
 3. Run nuget restore, targetting Elite.sln (e.g. "nuget.exe restore Elite.sln")
-4. Run Install-ElitePaddles-1.ps1 from the directory where it is packaged, alongside Elite.sln
-5. Open the solution in Visual Studio, select your platform and rebuild everything
-6. Right click on EliteUI project, Store -> Create App Package
-7. "No" to Windows Store upload, select \Elite\EliteUi\Out\EliteUi\AppPackages\ as output directory, don't generate app bundle and select your platform package
-8. Create the appx, then run Install-ElitePaddles-2.ps1
+4. Run Install-ElitePaddles.ps1 from the directory where it is packaged, alongside Elite.sln
 
-I splitted the original Install-ElitePaddles.ps1 script in two parts. In summary, they will perform the following tasks:
+I suggest looking through Install-ElitePaddles.ps1 so you understand what it's doing. In summary, it will perform the following tasks:
 
 1. Modify the dependencies of the Elite.csproj file to point to the directory of the XboxDevices app
-2. ACL the URL http://+:8642/EliteService to the active user so ElitePaddlesServiceHost can listen on it
-3. Generate a certificate to sign the appx package. The user will be prompted for passwords to create the certs, and then again to use them
-4. Add the certificate to the root store and sign the appx package.
-5. Deploy the ElitePaddles appx package.
-6. Enable loopback on the ElitePaddles app
+2. Compile Elite.sln targeted to your current platform, which includes:
+  * The ElitePaddles app
+  * ElitePaddlesServiceHost which hosts a local service used by ElitePaddles to bypass the SendInput restrictions of UWP
+3. ACL the URL http://+:8642/EliteService to the active user so ElitePaddlesServiceHost can listen on it
+4. Generate a certificate to sign the appx package. The user will be prompted for passwords to create the certs, and then again to use them
+6. Add the certificate to the root store and sign the appx package.
+7. Deploy the ElitePaddles appx package.
+5. Enable loopback on the ElitePaddles app
 
 ### Running the Application
 
@@ -52,6 +53,3 @@ After deploying the app, do the following:
 * No autostart for the service host application
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
 * Poor error handling/diagnostic ability, for instance when service is not running
-* VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish). Download ENU pack from [here](https://www.microsoft.com/en-US/download/details.aspx?id=48157)
-
-App icons based on [icon](http://www.flaticon.com/free-icon/xbox-one-wireless-control_37649) by Freepik.
