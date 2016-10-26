@@ -1,3 +1,9 @@
+This is a fork originally based on saqneo's Elite utility. I merged helifax' feature enhancements (Trigger Vibration,  Win10 Anniversary support, easier deployment) and re-introduced my original changes (default paddle config and modifier support) to this code base.
+
+Will probably add releases and a proper readme at some later point in time.
+
+# HELIFAX NOTE AS FOLLOWS: 
+
 # Elite-Enhanced
 This is a fork of the original Elite Repository.
 I wanted to play with the Trigger Vibrations (since not a lot of games actually use them) I created this fork.
@@ -6,7 +12,7 @@ Added a couple of icons as well.
 Plan is to make a Release as well so people don't have to build all this things but you can still do it.
 Copyright is to the companies responsible for the applications, libraries etc and in no way I claim otherwise.
 
-# ORIGINAL README AS FOLLOWS:
+# SAQNEO ORIGINAL README AS FOLLOWS: 
 
 ## Elite
 
