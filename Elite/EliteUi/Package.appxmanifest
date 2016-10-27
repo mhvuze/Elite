@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap mp rescap">
-  <Identity Name="ElitePaddles" Publisher="CN=ElitePaddlesPublisher" Version="1.0.0.0" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" />
+  <Identity Name="ElitePaddles" Publisher="CN=ElitePaddlesPublisher" Version="1.0.7.0" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" />
   <mp:PhoneIdentity PhoneProductId="11e66dc7-939c-4ffe-bb4d-2807a381c3c7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <!-- Identity of XboxDevices app -->
   <!--
@@ -24,10 +24,10 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="EliteUi.App">
       <uap:VisualElements DisplayName="ElitePaddles" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Helper for mapping paddles to keys on the Elite Controller" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="ElitePaddles" Square310x310Logo="Assets\Square310x310Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="ElitePaddles">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
-            <uap:ShowOn Tile="square310x310Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
