@@ -22,7 +22,7 @@ namespace EliteUi
     using Windows.UI.Xaml.Media;
 
     // added
-    using System.IO;
+    using System.Runtime.InteropServices.WindowsRuntime;
 
     /// <summary>
     /// The non-generated part of the main application.
@@ -128,15 +128,79 @@ namespace EliteUi
         /// <summary>
         /// Initializes the application window.
         /// </summary>
-        private void InitializeWindow()
+        private async void InitializeWindow()
         {
             ApplicationView.PreferredLaunchViewSize = new Size { Height = 550, Width = 430 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 550, Width = 430 });
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 550, Width = 430 });
 
-            // Config keys
-            PushKeysToUI();
+            // Check config
+            await configPresent();
+            await PushKeysToUI();
+        }
+
+        /// <summary>
+        /// Checks if config file is present and handles each case
+        /// </summary>
+        private async Task configPresent()
+        {
+            try
+            {
+                Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.bin");
+
+                // read
+                var ibuffer = await Windows.Storage.FileIO.ReadBufferAsync(configFile);
+                byte[] buffer = ibuffer.ToArray();
+
+                // Get and set assignedButtons
+                assignedButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 0);
+                assignedButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 2);
+                assignedButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 4);
+                assignedButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 6);
+
+                // Get and set assignedModButtons
+                assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 8);
+                assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
+                assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
+                assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
+
+                // Get and set vibration
+                if (buffer[16] == 1)
+                {
+                    vibrationEnabled.IsChecked = true;
+                    isVibrationEnabled = true;
+                }
+                else
+                {
+                    vibrationEnabled.IsChecked = false;
+                    isVibrationEnabled = false;
+                }
+            }
+            catch
+            {
+                // create empty config
+                Windows.Storage.StorageFile create = await configFolder.CreateFileAsync("elite_config.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                byte[] buffer = new byte[17];
+                var ibuffer = buffer.AsBuffer();
+                await Windows.Storage.FileIO.WriteBufferAsync(create, ibuffer);
+
+                // assignedButtons
+                assignedButtons[GamepadButtons.Aux1] = VirtualKey.None;
+                assignedButtons[GamepadButtons.Aux2] = VirtualKey.None;
+                assignedButtons[GamepadButtons.Aux3] = VirtualKey.None;
+                assignedButtons[GamepadButtons.Aux4] = VirtualKey.None;
+
+                // assignedModButtons
+                assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
+
+                // vibration
+                vibrationEnabled.IsChecked = false;
+                isVibrationEnabled = false;
+            }
         }
 
         /// <summary>
@@ -455,9 +519,9 @@ namespace EliteUi
         #region UI events and handling
 
         // Push assigned keys
-        private void PushKeysToUI()
+        private async Task PushKeysToUI()
         {
-            assignedButtons[GamepadButtons.Aux1] = VirtualKey.None;
+            /*assignedButtons[GamepadButtons.Aux1] = VirtualKey.None;
             assignedButtons[GamepadButtons.Aux2] = VirtualKey.None;
             assignedButtons[GamepadButtons.Aux3] = VirtualKey.F10;
             assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
@@ -465,18 +529,28 @@ namespace EliteUi
             assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
             assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
             assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
-            assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;*/
 
-            aux1_button.Content = VirtualKey.None.ToString();
-            aux2_button.Content = VirtualKey.None.ToString();
-            aux3_button.Content = VirtualKey.F10.ToString();
-            aux4_button.Content = VirtualKey.F12.ToString();
+            aux1_button.Content = assignedButtons[GamepadButtons.Aux1].ToString();
+            aux2_button.Content = assignedButtons[GamepadButtons.Aux2].ToString();
+            aux3_button.Content = assignedButtons[GamepadButtons.Aux3].ToString();
+            aux4_button.Content = assignedButtons[GamepadButtons.Aux4].ToString();
         }
 
         // Save config
         private async void buttonSave_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync("elite_config.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync("elite_config.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+
+            #region text approach
+            /* Text approach
+            // Get vibration state
+            string vibra_setting = "";
+            if (isVibrationEnabled)
+                vibra_setting = "1";
+            else
+                vibra_setting = "0";
+
             await Windows.Storage.FileIO.WriteTextAsync(configFile,
                 ((ushort)assignedButtons[GamepadButtons.Aux1]).ToString() + "\n" +
                 ((ushort)assignedButtons[GamepadButtons.Aux2]).ToString() + "\n" +
@@ -486,18 +560,68 @@ namespace EliteUi
                 ((ushort)assignedModButtons[GamepadButtons.Aux1]).ToString() + "\n" +
                 ((ushort)assignedModButtons[GamepadButtons.Aux2]).ToString() + "\n" +
                 ((ushort)assignedModButtons[GamepadButtons.Aux3]).ToString() + "\n" +
-                ((ushort)assignedModButtons[GamepadButtons.Aux4]).ToString()
-                );
+                ((ushort)assignedModButtons[GamepadButtons.Aux4]).ToString() + "\n" +
 
-            // Perhaps it would be easier to just write a binary file?
+                vibra_setting
+                );
+            */
+            #endregion
+
+            // Binary approach
+            // Get vibration state
+            byte vibra_setting = 0;
+            if (vibrationEnabled.IsChecked == true)
+                vibra_setting = 1;
+
+            // Create content buffer
+            byte[] buffer = new byte[17];
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux1]), 0, buffer, 0, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux2]), 0, buffer, 2, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux3]), 0, buffer, 4, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux4]), 0, buffer, 6, 2);
+
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux1]), 0, buffer, 8, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux2]), 0, buffer, 10, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux3]), 0, buffer, 12, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux4]), 0, buffer, 14, 2);
+
+            Buffer.SetByte(buffer, 16, vibra_setting);
+
+            // Write buffer to file
+            var ibuffer = buffer.AsBuffer();
+            await Windows.Storage.FileIO.WriteBufferAsync(configFile, ibuffer);
         }
 
         // Reload config
         private async void buttonReload_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.txt");
+            Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.bin");
+            var ibuffer = await Windows.Storage.FileIO.ReadBufferAsync(configFile);
+            byte[] buffer = ibuffer.ToArray();
 
-            // TODO: Read and use values
+            // Get and set assignedButtons
+            assignedButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 0);
+            assignedButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 2);
+            assignedButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 4);
+            assignedButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 6);
+
+            // Get and set assignedModButtons
+            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 8);
+            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
+            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
+            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
+
+            // Get and set vibration
+            if (buffer[16] == 1)
+            {
+                vibrationEnabled.IsChecked = true;
+                isVibrationEnabled = true;
+            }
+            else
+            {
+                vibrationEnabled.IsChecked = false;
+                isVibrationEnabled = false;
+            }
         }
 
         // Vibration checkbox
