@@ -192,10 +192,10 @@ namespace EliteUi
                 assignedButtons[GamepadButtons.Aux4] = VirtualKey.None;
 
                 // assignedModButtons
-                assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
-                assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
-                assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
-                assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux1] = VirtualKey.A;
+                assignedModButtons[GamepadButtons.Aux2] = VirtualKey.C;
+                assignedModButtons[GamepadButtons.Aux3] = VirtualKey.B;
+                assignedModButtons[GamepadButtons.Aux4] = VirtualKey.D;
 
                 // vibration
                 vibrationEnabled.IsChecked = false;
@@ -523,18 +523,23 @@ namespace EliteUi
         {
             /*assignedButtons[GamepadButtons.Aux1] = VirtualKey.None;
             assignedButtons[GamepadButtons.Aux2] = VirtualKey.None;
-            assignedButtons[GamepadButtons.Aux3] = VirtualKey.F10;
+            assignedButtons[GamepadButtons.Aux3] = VirtualKey.Y;
             assignedButtons[GamepadButtons.Aux4] = VirtualKey.F12;
 
             assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
             assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
-            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
+            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.A;
             assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;*/
 
             aux1_button.Content = assignedButtons[GamepadButtons.Aux1].ToString();
             aux2_button.Content = assignedButtons[GamepadButtons.Aux2].ToString();
             aux3_button.Content = assignedButtons[GamepadButtons.Aux3].ToString();
             aux4_button.Content = assignedButtons[GamepadButtons.Aux4].ToString();
+
+            aux1_button_mod.Content = assignedModButtons[GamepadButtons.Aux1].ToString();
+            aux2_button_mod.Content = assignedModButtons[GamepadButtons.Aux2].ToString();
+            aux3_button_mod.Content = assignedModButtons[GamepadButtons.Aux3].ToString();
+            aux4_button_mod.Content = assignedModButtons[GamepadButtons.Aux4].ToString();
         }
 
         // Save config
@@ -627,7 +632,7 @@ namespace EliteUi
         // Vibration checkbox
         public void combobox_Click(object sender, RoutedEventArgs e)
         {
-            if (isVibrationEnabled)
+            if (isVibrationEnabled == true)
                 isVibrationEnabled = false;
             else
                 isVibrationEnabled = true;
