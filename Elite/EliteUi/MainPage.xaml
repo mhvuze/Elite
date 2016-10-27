@@ -5,7 +5,7 @@
     xmlns:local="using:EliteUi"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Width="320" Height="400">
+    mc:Ignorable="d" Width="320" Height="462.057">
     <Page.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
@@ -116,7 +116,7 @@
                 <TextBlock Text="Bottom Right" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
         </Grid>
-        <Grid x:Name="ControllerReadings0" Background="#107C10" MinHeight="150" Margin="10,0,10,10" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" >
+        <Grid x:Name="ControllerReadings0" Background="#107C10" MinHeight="150" Margin="10,66,10,-56" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="120"/>
                 <ColumnDefinition MinWidth="180"/>
@@ -134,5 +134,7 @@
             <TextBlock x:Name="measurementId" Grid.Column="0" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="20,10,10,10" />
             <TextBlock x:Name="measurementValue" Grid.Column="1" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="10,10,20,10" />
         </Grid>
+        <Button x:Name="buttonSave" Content="Save Config" HorizontalAlignment="Left" Height="34" VerticalAlignment="Top" Width="146" Margin="10,235,-88.667,-237" Background="Black" Foreground="White" Click="buttonSave_Click"/>
+        <Button x:Name="buttonReload" Content="Reload Config" HorizontalAlignment="Left" Height="34" VerticalAlignment="Top" Width="146" Margin="164,235,-310,-237" Background="Black" Foreground="White" Click="buttonReload_Click"/>
     </RelativePanel>
 </Page>

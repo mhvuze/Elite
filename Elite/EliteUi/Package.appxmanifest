@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap mp rescap">
-  <Identity Name="ElitePaddles" Publisher="CN=ElitePaddlesPublisher" Version="1.0.7.0" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" />
+  <Identity Name="ElitePaddles" Publisher="CN=ElitePaddlesPublisher" Version="1.0.11.0" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" />
   <mp:PhoneIdentity PhoneProductId="11e66dc7-939c-4ffe-bb4d-2807a381c3c7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <!-- Identity of XboxDevices app -->
   <!--
