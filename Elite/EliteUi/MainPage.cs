@@ -127,10 +127,10 @@ namespace EliteUi
         /// </summary>
         private async void InitializeWindow()
         {
-            ApplicationView.PreferredLaunchViewSize = new Size { Height = 400, Width = 320 };
+            ApplicationView.PreferredLaunchViewSize = new Size { Height = 400, Width = 360 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 400, Width = 320 });
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 400, Width = 320 });
+            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 400, Width = 360 });
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 400, Width = 360 });
 
             // Check config
             await configPresent();
@@ -189,10 +189,10 @@ namespace EliteUi
                 assignedButtons[GamepadButtons.Aux4] = VirtualKey.None;
 
                 // assignedModButtons
-                assignedModButtons[GamepadButtons.Aux1] = VirtualKey.A;
-                assignedModButtons[GamepadButtons.Aux2] = VirtualKey.C;
-                assignedModButtons[GamepadButtons.Aux3] = VirtualKey.B;
-                assignedModButtons[GamepadButtons.Aux4] = VirtualKey.D;
+                assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
+                assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
 
                 /* vibration
                 vibrationEnabled.IsChecked = false;
@@ -536,6 +536,8 @@ namespace EliteUi
             assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
             assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
             assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
+
+            await PushKeysToUI();
 
             /* Get and set vibration
             if (buffer[16] == 1)
