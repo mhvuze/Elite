@@ -12,6 +12,8 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 * Updated look of UI and icons to the Xbox Elite vibe
 * Service Host starts minimized
 
+![alt tag](http://i.imgur.com/fl7Qb9q.png)
+
 ### Installation for end users
 * Make sure you have the latst version of the Xbox Device app installed from the Windows Store
 * Download and unpack the [latest release](https://github.com/mhvuze/Elite/releases) of this utility
