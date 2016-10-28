@@ -1,57 +1,55 @@
 # Elite
 
-This is a hacky workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about saqneos experience creating the app, [visit his blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
+This is a hacky workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about saqneo's - the original author - experience creating the app, [visit his blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
 
-Since I ran into a bunch of issues during deployment (Exitcode, appx not building etc), I decided to push my minor changes and instructions to this fork. Maybe somebody will find it useful.
-
-Thanks to added modifier support this also works for Shadowplay etc. now :)
+helifax simplified the deployment process and added support for [Windows 10 Anniversary Update building](https://github.com/helifax/Elite-Enhanced/commit/f22f51abc60b0f1d67b8f8048d1aa1343a193760) but I ran into some issues using his fork so I merged the necessary changes here and built on top of that.
 
 ### Changes to original
-* Deployment script splitted due to .NET-sided issues
-* Support for modifier keys (hardcoded right now; TODO: Add UI buttons)
-* Configuration file with auto-save and auto-load (only writing right now; TODO: Fixup)
-* Host now starts minimized to tray (TODO: Add to PowerShell script)
+* Builds and works on Windows 10 Anniversary Update
+* Includes support for modifier / second keys (very useful for Shadowplay etc.)
+* Writes and reads a configuration file for extra comfort
+* Loads last saved configuration at launch
+* Updated look of UI and icons to the Xbox Elite vibe
+* Service Host starts minimized
 
-### Prerequisites
-* Xbox Elite Controller
+### Installation for end users
+* Make sure you have the latst version of the Xbox Device app installed from the Windows Store
+* Download and unpack the [latest release](https://github.com/mhvuze/Elite/releases) of this utility
+* Run AddListenerURI.ps1 with PowerShell (confirm all relevant prompts you might run into)
+* Run Add-AppDevPackage.ps1 found in the EliteUI folder (confirm all relevant prompts you might run into)
+
+### Usage
+* Run ElitePaddlesServiceHost.exe
+* Run ElitePaddles app
+* Configure buttons to your liking and save the config so it loads up automatically at launch
+* Enjoy
+
+### Usage Notes
+* Paddle configs of the Xbox Device App will overwrite EliteUI settings
+* Multiple Xbox One Elite Controllers are not supported
+
+### Building Prerequisites
 * Xbox Accessories App
 * Microsoft Build Tools (or VS2015)
 * Nuget Command Line tool (or VS2015)
 * Windows 10 SDK for certificate creation tools (or VS2015)
 
 ### Deployment Steps
-1. Download and extract the package
+1. Clone the repo
 2. Download the nuget command-line utility (https://docs.nuget.org/consume/installing-nuget)
 3. Run nuget restore, targetting Elite.sln (e.g. "nuget.exe restore Elite.sln")
-4. Run Install-ElitePaddles-1.ps1 from the directory where it is packaged, alongside Elite.sln
-5. Open the solution in Visual Studio, select your platform and rebuild everything
-6. Right click on EliteUI project, Store -> Create App Package
-7. "No" to Windows Store upload, select \Elite\EliteUi\Out\EliteUi\AppPackages\ as output directory, don't generate app bundle and select your platform package
-8. Create the appx, then run Install-ElitePaddles-2.ps1
+4. Run Generate_Certificate.bat (if you are asked for a password, it's 'passWD')
+5. Open the solution in Visual Studio
+6. Edit Package.appxmanifest and point to the certificate
+7. Rebuild project for your target platform
+8. Right click on EliteUI project, Store -> Create App Package
+9. "No" to Windows Store upload and generate app bundle
+10. Run Add-AppDevPackage.ps1 to install
 
-I splitted the original Install-ElitePaddles.ps1 script in two parts. In summary, they will perform the following tasks:
-
-1. Modify the dependencies of the Elite.csproj file to point to the directory of the XboxDevices app
-2. ACL the URL http://+:8642/EliteService to the active user so ElitePaddlesServiceHost can listen on it
-3. Generate a certificate to sign the appx package. The user will be prompted for passwords to create the certs, and then again to use them
-4. Add the certificate to the root store and sign the appx package.
-5. Deploy the ElitePaddles appx package.
-6. Enable loopback on the ElitePaddles app
-
-### Running the Application
-
-After deploying the app, do the following:
-
-1. Start ElitePaddlesServiceHost.exe from the ElitePaddlesServiceHost\Out\ directory
-2. Start ElitePaddles app
-
-### Known or Potential Issues
+### Planned features and known issues
+* Feature: Service Host Autostart
+* Feature: Trigger Vibration from helifax fork
 * Multiple gamepads unsupported
-* Large number of dependencies in deployment script
-* Fiddling with deployment script may be required for some users as it was only lightly tested
-* No autostart for the service host application
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
 * Poor error handling/diagnostic ability, for instance when service is not running
 * VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish). Download ENU pack from [here](https://www.microsoft.com/en-US/download/details.aspx?id=48157)
-
-App icons based on [icon](http://www.flaticon.com/free-icon/xbox-one-wireless-control_37649) by Freepik.
