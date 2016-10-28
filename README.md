@@ -43,7 +43,7 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 4. Run Generate_Certificate.bat (if you are asked for a password, it's 'passWD')
 5. Open the solution in Visual Studio
 6. Edit Package.appxmanifest and point to the certificate
-7. Rebuild project for your target platform
+7. Rebuild project in debug mode (!) for your target platform
 8. Right click on EliteUI project, Store -> Create App Package
 9. "No" to Windows Store upload and generate app bundle
 10. Run Add-AppDevPackage.ps1 to install
@@ -51,6 +51,7 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 ### Planned features and known issues
 * Feature: Service Host Autostart
 * Feature: Trigger Vibration from helifax fork
+* Default drive for Windows Store Apps has to be Windows installation drive, otherwise install will fail (good job M$)
 * Multiple gamepads unsupported
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
 * Poor error handling/diagnostic ability, for instance when service is not running
