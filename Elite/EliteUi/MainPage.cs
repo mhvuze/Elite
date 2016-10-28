@@ -127,10 +127,16 @@ namespace EliteUi
         /// </summary>
         private async void InitializeWindow()
         {
-            ApplicationView.PreferredLaunchViewSize = new Size { Height = 460 , Width = 320 };
+            ApplicationView.PreferredLaunchViewSize = new Size { Height = 460 , Width = 570 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 460, Width = 320 });
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 460, Width = 320 });
+            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 460, Width = 570 });
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 460, Width = 570 });
+
+            // Fill dropdown lists for modifiers
+            comboBoxMod1.ItemsSource = Enum.GetNames(typeof(VirtualKey));
+            comboBoxMod2.ItemsSource = Enum.GetNames(typeof(VirtualKey));
+            comboBoxMod3.ItemsSource = Enum.GetNames(typeof(VirtualKey));
+            comboBoxMod4.ItemsSource = Enum.GetNames(typeof(VirtualKey));
 
             // Check config
             await configPresent();
@@ -457,10 +463,19 @@ namespace EliteUi
             aux3_button.Content = assignedButtons[GamepadButtons.Aux3].ToString();
             aux4_button.Content = assignedButtons[GamepadButtons.Aux4].ToString();
 
-            /*aux1_button_mod.Content = assignedModButtons[GamepadButtons.Aux1].ToString();
-            aux2_button_mod.Content = assignedModButtons[GamepadButtons.Aux2].ToString();
-            aux3_button_mod.Content = assignedModButtons[GamepadButtons.Aux3].ToString();
-            aux4_button_mod.Content = assignedModButtons[GamepadButtons.Aux4].ToString();*/
+            comboBoxMod1.SelectedItem = Enum.GetName(typeof(VirtualKey), assignedModButtons[GamepadButtons.Aux1]);
+            comboBoxMod2.SelectedItem = Enum.GetName(typeof(VirtualKey), assignedModButtons[GamepadButtons.Aux2]);
+            comboBoxMod3.SelectedItem = Enum.GetName(typeof(VirtualKey), assignedModButtons[GamepadButtons.Aux3]);
+            comboBoxMod4.SelectedItem = Enum.GetName(typeof(VirtualKey), assignedModButtons[GamepadButtons.Aux4]);
+        }
+
+        // Apply modifiers
+        private void buttonMods_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod1.SelectedItem).ToString());
+            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod2.SelectedItem).ToString());
+            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod3.SelectedItem).ToString());
+            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod4.SelectedItem).ToString());
         }
 
         // Save config
@@ -468,32 +483,6 @@ namespace EliteUi
         {
             Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync("elite_config.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
 
-            #region text approach
-            /* Text approach
-            // Get vibration state
-            string vibra_setting = "";
-            if (isVibrationEnabled)
-                vibra_setting = "1";
-            else
-                vibra_setting = "0";
-
-            await Windows.Storage.FileIO.WriteTextAsync(configFile,
-                ((ushort)assignedButtons[GamepadButtons.Aux1]).ToString() + "\n" +
-                ((ushort)assignedButtons[GamepadButtons.Aux2]).ToString() + "\n" +
-                ((ushort)assignedButtons[GamepadButtons.Aux3]).ToString() + "\n" +
-                ((ushort)assignedButtons[GamepadButtons.Aux4]).ToString() + "\n" +
-
-                ((ushort)assignedModButtons[GamepadButtons.Aux1]).ToString() + "\n" +
-                ((ushort)assignedModButtons[GamepadButtons.Aux2]).ToString() + "\n" +
-                ((ushort)assignedModButtons[GamepadButtons.Aux3]).ToString() + "\n" +
-                ((ushort)assignedModButtons[GamepadButtons.Aux4]).ToString() + "\n" +
-
-                vibra_setting
-                );
-            */
-            #endregion
-
-            // Binary approach
             /* Get vibration state
             byte vibra_setting = 0;
             if (vibrationEnabled.IsChecked == true)
