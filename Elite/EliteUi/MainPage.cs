@@ -127,10 +127,10 @@ namespace EliteUi
         /// </summary>
         private async void InitializeWindow()
         {
-            ApplicationView.PreferredLaunchViewSize = new Size { Height = 400, Width = 360 };
+            ApplicationView.PreferredLaunchViewSize = new Size { Height = 460 , Width = 320 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 400, Width = 360 });
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 400, Width = 360 });
+            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 460, Width = 320 });
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 460, Width = 320 });
 
             // Check config
             await configPresent();
@@ -449,7 +449,7 @@ namespace EliteUi
 
             assignedModButtons[GamepadButtons.Aux1] = VirtualKey.None;
             assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
-            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.A;
+            assignedModButtons[GamepadButtons.Aux3] = VirtualKey.Menu;
             assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;*/
 
             aux1_button.Content = assignedButtons[GamepadButtons.Aux1].ToString();
