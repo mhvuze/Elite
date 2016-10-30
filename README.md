@@ -51,6 +51,7 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 ### Planned features and known issues
 * Feature: Service Host Autostart
 * Feature: Trigger Vibration from helifax fork
+* Currently crashes when you try to save with an unassigned primary key ("None" is fine)
 * Default drive for Windows Store Apps has to be Windows installation drive, otherwise install will fail (good job M$)
 * Multiple gamepads unsupported
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
