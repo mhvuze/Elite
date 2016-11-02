@@ -152,7 +152,7 @@ namespace EliteUi
         {
             try
             {
-                Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.bin");
+                Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("Default.bin");
 
                 // read
                 var ibuffer = await Windows.Storage.FileIO.ReadBufferAsync(configFile);
@@ -185,7 +185,7 @@ namespace EliteUi
             catch
             {
                 // create empty config
-                Windows.Storage.StorageFile create = await configFolder.CreateFileAsync("elite_config.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                Windows.Storage.StorageFile create = await configFolder.CreateFileAsync("Default.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
                 byte[] buffer = new byte[17];
                 var ibuffer = buffer.AsBuffer();
                 await Windows.Storage.FileIO.WriteBufferAsync(create, ibuffer);
@@ -214,9 +214,10 @@ namespace EliteUi
         /// 
         private async Task populateProfiles()
         {
-            // Maybe add more elegant way to display file names later
-            string[] profiles = Directory.GetFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly);
+            var profiles = Directory.EnumerateFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly).Select(Path.GetFileNameWithoutExtension);
             comboBoxProfile.ItemsSource = profiles;
+
+            comboBoxProfile.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -494,7 +495,7 @@ namespace EliteUi
         // Save config
         private async void buttonSave_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync("elite_config.bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync(comboBoxProfile.SelectedItem + ".bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
 
             /* Get vibration state
             byte vibra_setting = 0;
@@ -523,41 +524,11 @@ namespace EliteUi
         // Reload config
         private async void buttonReload_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("elite_config.bin");
+            /*Windows.Storage.StorageFile configFile = await configFolder.GetFileAsync("Default.bin");
             var ibuffer = await Windows.Storage.FileIO.ReadBufferAsync(configFile);
-            byte[] buffer = ibuffer.ToArray();
+            byte[] buffer = ibuffer.ToArray();*/
 
-            // Get and set assignedButtons
-            assignedButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 0);
-            assignedButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 2);
-            assignedButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 4);
-            assignedButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 6);
-
-            // Get and set assignedModButtons
-            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 8);
-            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
-            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
-            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
-
-            await PushKeysToUI();
-
-            /* Get and set vibration
-            if (buffer[16] == 1)
-            {
-                vibrationEnabled.IsChecked = true;
-                isVibrationEnabled = true;
-            }
-            else
-            {
-                vibrationEnabled.IsChecked = false;
-                isVibrationEnabled = false;
-            }*/
-        }
-
-        // Load selected profile
-        private void buttonLoadProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            string profile_path = configFolder.Path + comboBoxProfile.SelectedItem;
+            string profile_path = configFolder.Path + "\\" + comboBoxProfile.SelectedItem + ".bin";
 
             // read
             byte[] buffer = File.ReadAllBytes(profile_path);
@@ -585,17 +556,92 @@ namespace EliteUi
                 vibrationEnabled.IsChecked = false;
                 isVibrationEnabled = false;
             }*/
+
+            await PushKeysToUI();
+        }
+
+        // Load selected profile
+        private void buttonLoadProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string profile_path = configFolder.Path + "\\" + comboBoxProfile.SelectedItem + ".bin";
+
+            // read
+            byte[] buffer = File.ReadAllBytes(profile_path);
+
+            // Get and set assignedButtons
+            assignedButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 0);
+            assignedButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 2);
+            assignedButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 4);
+            assignedButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 6);
+
+            // Get and set assignedModButtons
+            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 8);
+            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
+            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
+            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
+
+            /* Get and set vibration
+            if (buffer[16] == 1)
+            {
+                vibrationEnabled.IsChecked = true;
+                isVibrationEnabled = true;
+            }
+            else
+            {
+                vibrationEnabled.IsChecked = false;
+                isVibrationEnabled = false;
+            }*/
+
+            PushKeysToUI();
         }
 
         // Save current profile
-        private void buttonSaveProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void buttonSaveProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            // Get name
+            var name_box = new TextBox { Width = 200, Height = 25 };
+
             var dialog = new ContentDialog()
             {
                 Title = "Profile Name",
                 MaxWidth = this.ActualWidth,
-                Content = "What"
+                Content = name_box,
+                PrimaryButtonText = "Confirm"
             };
+
+            await dialog.ShowAsync();
+
+            var profile_name = ((TextBox)dialog.Content).Text;
+
+            // Save to file
+            Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync(profile_name + ".bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+
+            /* Get vibration state
+            byte vibra_setting = 0;
+            if (vibrationEnabled.IsChecked == true)
+                vibra_setting = 1;*/
+
+            // Create content buffer
+            byte[] buffer = new byte[17];
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux1]), 0, buffer, 0, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux2]), 0, buffer, 2, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux3]), 0, buffer, 4, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux4]), 0, buffer, 6, 2);
+
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux1]), 0, buffer, 8, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux2]), 0, buffer, 10, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux3]), 0, buffer, 12, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux4]), 0, buffer, 14, 2);
+
+            //Buffer.SetByte(buffer, 16, vibra_setting);
+
+            // Write buffer to file
+            var ibuffer = buffer.AsBuffer();
+            await Windows.Storage.FileIO.WriteBufferAsync(configFile, ibuffer);
+
+            // Repopulate dropdown list
+            var profiles = Directory.EnumerateFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly).Select(Path.GetFileNameWithoutExtension);
+            // not sure how to proceed here... binding to the combobox crashes the app
         }
 
         /// <summary>
@@ -715,8 +761,8 @@ namespace EliteUi
             {
                 if (!this.deferringClear)
                 {
-                    this.assignedButtons.Remove(gamepadButton);
-                    this.assignedButton.Content = "Unassigned";
+                    this.assignedButtons[this.assignedGamepadButton] = VirtualKey.None;
+                    this.assignedButton.Content = "None";
                 }
 
                 this.ClearAssignmentVariables();
