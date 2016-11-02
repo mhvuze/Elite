@@ -143,6 +143,7 @@ namespace EliteUi
             await configPresent();
             await PushKeysToUI();
             await populateProfiles();
+            comboBoxProfile.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -216,8 +217,6 @@ namespace EliteUi
         {
             var profiles = Directory.EnumerateFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly).Select(Path.GetFileNameWithoutExtension);
             comboBoxProfile.ItemsSource = profiles;
-
-            comboBoxProfile.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -638,10 +637,23 @@ namespace EliteUi
             // Write buffer to file
             var ibuffer = buffer.AsBuffer();
             await Windows.Storage.FileIO.WriteBufferAsync(configFile, ibuffer);
+        }
 
-            // Repopulate dropdown list
-            var profiles = Directory.EnumerateFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly).Select(Path.GetFileNameWithoutExtension);
-            // not sure how to proceed here... binding to the combobox crashes the app
+        // Delete selected profile
+        private void buttonDeleteProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string profile_path = configFolder.Path + "\\" + comboBoxProfile.SelectedItem + ".bin";
+            File.Delete(profile_path);
+            populateProfiles();
+            comboBoxProfile.SelectedIndex = 0;
+        }
+
+        // Workaround for populating the profile combobox after creating a new profile
+        private void comboBoxProfile_populate(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var prev = comboBoxProfile.SelectedItem;
+            populateProfiles();
+            comboBoxProfile.SelectedItem = prev;
         }
 
         /// <summary>
