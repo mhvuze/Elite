@@ -150,5 +150,9 @@
             <ListView x:Name="listView3" Height="100" Width="100"/>
         </ComboBox>
         <TextBlock Text="Modifier / Second Key" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="337,30,-335.667,-30" />
+        <ComboBox x:Name="comboBoxProfile" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="203" Margin="337,328,-476,-328"/>
+        <TextBlock Text="Profile Selection" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="337,303,-337.667,-303" />
+        <Button x:Name="buttonSaveProfile" Content="Save" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="96" Margin="337,365,-350.667,-367" Background="Black" Foreground="White" Click="buttonSaveProfile_Click" BorderBrush="#FF3A3A3A"/>
+        <Button x:Name="buttonLoadProfile" Content="Load" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="96" Margin="444,365,-457.667,-367" Background="Black" Foreground="White" Click="buttonLoadProfile_Click" BorderBrush="#FF3A3A3A" RenderTransformOrigin="0.095,0.556"/>
     </RelativePanel>
 </Page>

@@ -23,6 +23,7 @@ namespace EliteUi
 
     // my additions
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.IO;
 
     /// <summary>
     /// The non-generated part of the main application.
@@ -141,6 +142,7 @@ namespace EliteUi
             // Check config
             await configPresent();
             await PushKeysToUI();
+            await populateProfiles();
         }
 
         /// <summary>
@@ -204,6 +206,17 @@ namespace EliteUi
                 vibrationEnabled.IsChecked = false;
                 isVibrationEnabled = false;*/
             }
+        }
+
+        /// <summary>
+        /// Populates the profile combobox.
+        /// </summary>
+        /// 
+        private async Task populateProfiles()
+        {
+            // Maybe add more elegant way to display file names later
+            string[] profiles = Directory.GetFiles(configFolder.Path, "*.bin", SearchOption.TopDirectoryOnly);
+            comboBoxProfile.ItemsSource = profiles;
         }
 
         /// <summary>
@@ -539,6 +552,50 @@ namespace EliteUi
                 vibrationEnabled.IsChecked = false;
                 isVibrationEnabled = false;
             }*/
+        }
+
+        // Load selected profile
+        private void buttonLoadProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string profile_path = configFolder.Path + comboBoxProfile.SelectedItem;
+
+            // read
+            byte[] buffer = File.ReadAllBytes(profile_path);
+
+            // Get and set assignedButtons
+            assignedButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 0);
+            assignedButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 2);
+            assignedButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 4);
+            assignedButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 6);
+
+            // Get and set assignedModButtons
+            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)BitConverter.ToUInt16(buffer, 8);
+            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)BitConverter.ToUInt16(buffer, 10);
+            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
+            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
+
+            /* Get and set vibration
+            if (buffer[16] == 1)
+            {
+                vibrationEnabled.IsChecked = true;
+                isVibrationEnabled = true;
+            }
+            else
+            {
+                vibrationEnabled.IsChecked = false;
+                isVibrationEnabled = false;
+            }*/
+        }
+
+        // Save current profile
+        private void buttonSaveProfile_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = "Profile Name",
+                MaxWidth = this.ActualWidth,
+                Content = "What"
+            };
         }
 
         /// <summary>
