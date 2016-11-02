@@ -11,6 +11,7 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 * Loads last saved configuration at launch
 * Updated look of UI and icons to the Xbox Elite vibe
 * Service Host starts minimized
+* Includes full profile saving and loading support for multiple configurations
 
 ![alt tag](http://i.imgur.com/fl7Qb9q.png)
 
@@ -51,7 +52,8 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 ### Planned features and known issues
 * Feature: Service Host Autostart
 * Feature: Trigger Vibration from helifax fork
-* Currently crashes when you try to save with an unassigned primary key ("None" is fine)
+* Feature: Update profile list after saving prof (currently not possible due to crash for some reason)
+* Feature: Some option to delete profile
 * Default drive for Windows Store Apps has to be Windows installation drive, otherwise install will fail (good job M$)
 * Multiple gamepads unsupported
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
