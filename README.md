@@ -24,12 +24,14 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 ### Usage
 * Run ElitePaddlesServiceHost.exe
 * Run ElitePaddles app
-* Configure buttons to your liking and save the config so it loads up automatically at launch
+* Configure buttons to your liking and save the config as default or seperate profile
 * Enjoy
 
 ### Usage Notes
 * Paddle configs of the Xbox Device App will overwrite EliteUI settings
 * Multiple Xbox One Elite Controllers are not supported
+
+=========================================================================
 
 ### Building Prerequisites
 * Xbox Accessories App
@@ -48,6 +50,8 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 8. Right click on EliteUI project, Store -> Create App Package
 9. "No" to Windows Store upload and generate app bundle
 10. Run Add-AppDevPackage.ps1 to install
+
+=========================================================================
 
 ### Planned features and known issues
 * Feature: Service Host Autostart
