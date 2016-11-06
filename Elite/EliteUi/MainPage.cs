@@ -35,6 +35,7 @@ namespace EliteUi
     {
         // variables
         Windows.Storage.StorageFolder configFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        static bool VibrationEnabled = false;
 
         /// <summary>
         /// The service URI
@@ -171,17 +172,15 @@ namespace EliteUi
                 assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
                 assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
 
-                /* Get and set vibration
+                // Get and set vibration
                 if (buffer[16] == 1)
                 {
-                    vibrationEnabled.IsChecked = true;
-                    isVibrationEnabled = true;
+                    VibrationEnabled = true;
                 }
                 else
                 {
-                    vibrationEnabled.IsChecked = false;
-                    isVibrationEnabled = false;
-                }*/
+                    VibrationEnabled = false;
+                }
             }
             catch
             {
@@ -202,10 +201,6 @@ namespace EliteUi
                 assignedModButtons[GamepadButtons.Aux2] = VirtualKey.None;
                 assignedModButtons[GamepadButtons.Aux3] = VirtualKey.None;
                 assignedModButtons[GamepadButtons.Aux4] = VirtualKey.None;
-
-                /* vibration
-                vibrationEnabled.IsChecked = false;
-                isVibrationEnabled = false;*/
             }
         }
 
@@ -287,6 +282,49 @@ namespace EliteUi
 
                 this.WriteGamepadReadings(reading);
                 this.ProcessGamepadReadings(reading);
+
+                // Vibration
+                {
+                    Windows.Gaming.Input.Gamepad gamepad = Windows.Gaming.Input.Gamepad.Gamepads.First();
+                    Windows.Gaming.Input.GamepadVibration vibration;
+                    EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
+
+                    vibration.LeftMotor = 0.0;
+                    vibration.LeftTrigger = 0.0;
+                    vibration.RightMotor = 0.0;
+                    vibration.RightTrigger = 0.0;
+
+                    // Set vibration
+                    if (reading.LeftTrigger != 0.0)
+                    {
+                        if (VibrationEnabled == true)
+                        {
+                            double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
+                            vibration.LeftTrigger = value * config.ScaleFactorLeftTriggerMotor / 100.0f;
+                            gamepad.Vibration = vibration;
+                        }
+                        else
+                        {
+                            vibration.LeftTrigger = 0.0;
+                            gamepad.Vibration = vibration;
+                        }
+                    }
+
+                    if (reading.RightTrigger != 0.0)
+                    {
+                        if (VibrationEnabled == true)
+                        {
+                            double value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
+                            vibration.RightTrigger = value * config.ScaleFactorRightTriggerMotor / 100.0f;
+                            gamepad.Vibration = vibration;
+                        }
+                        else
+                        {
+                            vibration.RightTrigger = 0.0;
+                            gamepad.Vibration = vibration;
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
@@ -347,6 +385,29 @@ namespace EliteUi
 
             valueStringBuilder.AppendLine(reading.RightThumbstickY.ToString());
             propertyStringBuilder.AppendLine("RightThumbstickY:");
+                        
+            EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
+
+            // Vibration values
+            valueStringBuilder.AppendLine(config.LeftTrigger.Min.ToString());
+            propertyStringBuilder.AppendLine("LeftTriggerMin:");
+
+            valueStringBuilder.AppendLine(config.LeftTrigger.Max.ToString());
+            propertyStringBuilder.AppendLine("LeftTriggerMax:");
+
+            valueStringBuilder.AppendLine(config.RightTrigger.Min.ToString());
+            propertyStringBuilder.AppendLine("RightTriggerMin:");
+
+            valueStringBuilder.AppendLine(config.RightTrigger.Max.ToString());
+            propertyStringBuilder.AppendLine("RightTriggerMax:");
+
+            double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
+            valueStringBuilder.AppendLine(value.ToString());
+            propertyStringBuilder.AppendLine("VibrationValueLeft");
+
+            value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
+            valueStringBuilder.AppendLine(value.ToString());
+            propertyStringBuilder.AppendLine("VibrationValueRight");
 
             var task = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementId.Text = propertyStringBuilder.ToString(); }).AsTask();
             var task2 = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementValue.Text = valueStringBuilder.ToString(); }).AsTask();
@@ -491,15 +552,16 @@ namespace EliteUi
             assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod4.SelectedItem).ToString());
         }
 
+        // Toggle vibration
+        private void buttonVibration_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            VibrationEnabled = !VibrationEnabled;
+        }
+
         // Save config
         private async void buttonSave_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync(comboBoxProfile.SelectedItem + ".bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
-
-            /* Get vibration state
-            byte vibra_setting = 0;
-            if (vibrationEnabled.IsChecked == true)
-                vibra_setting = 1;*/
 
             // Create content buffer
             byte[] buffer = new byte[17];
@@ -513,7 +575,7 @@ namespace EliteUi
             Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux3]), 0, buffer, 12, 2);
             Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux4]), 0, buffer, 14, 2);
 
-            //Buffer.SetByte(buffer, 16, vibra_setting);
+            Buffer.SetByte(buffer, 16, Convert.ToByte(VibrationEnabled));
 
             // Write buffer to file
             var ibuffer = buffer.AsBuffer();
@@ -544,17 +606,15 @@ namespace EliteUi
             assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
             assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
 
-            /* Get and set vibration
+            // Get and set vibration
             if (buffer[16] == 1)
             {
-                vibrationEnabled.IsChecked = true;
-                isVibrationEnabled = true;
+                VibrationEnabled = true;
             }
             else
             {
-                vibrationEnabled.IsChecked = false;
-                isVibrationEnabled = false;
-            }*/
+                VibrationEnabled = false;
+            }
 
             await PushKeysToUI();
         }
@@ -579,17 +639,15 @@ namespace EliteUi
             assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)BitConverter.ToUInt16(buffer, 12);
             assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)BitConverter.ToUInt16(buffer, 14);
 
-            /* Get and set vibration
+            // Get and set vibration
             if (buffer[16] == 1)
             {
-                vibrationEnabled.IsChecked = true;
-                isVibrationEnabled = true;
+                VibrationEnabled = true;
             }
             else
             {
-                vibrationEnabled.IsChecked = false;
-                isVibrationEnabled = false;
-            }*/
+                VibrationEnabled = false;
+            }
 
             PushKeysToUI();
         }
@@ -614,12 +672,7 @@ namespace EliteUi
 
             // Save to file
             Windows.Storage.StorageFile configFile = await configFolder.CreateFileAsync(profile_name + ".bin", Windows.Storage.CreationCollisionOption.ReplaceExisting);
-
-            /* Get vibration state
-            byte vibra_setting = 0;
-            if (vibrationEnabled.IsChecked == true)
-                vibra_setting = 1;*/
-
+            
             // Create content buffer
             byte[] buffer = new byte[17];
             Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedButtons[GamepadButtons.Aux1]), 0, buffer, 0, 2);
@@ -632,7 +685,7 @@ namespace EliteUi
             Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux3]), 0, buffer, 12, 2);
             Buffer.BlockCopy(BitConverter.GetBytes((ushort)assignedModButtons[GamepadButtons.Aux4]), 0, buffer, 14, 2);
 
-            //Buffer.SetByte(buffer, 16, vibra_setting);
+            Buffer.SetByte(buffer, 16, Convert.ToByte(VibrationEnabled));
 
             // Write buffer to file
             var ibuffer = buffer.AsBuffer();
@@ -654,6 +707,12 @@ namespace EliteUi
             var prev = comboBoxProfile.SelectedItem;
             populateProfiles();
             comboBoxProfile.SelectedItem = prev;
+        }
+
+        // Normalize vibration values
+        private double normalizeTriggerValue(double value, int min, int max)
+        {
+            return (value * 100 - min) / (max - min);
         }
 
         /// <summary>
