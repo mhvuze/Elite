@@ -129,10 +129,10 @@ namespace EliteUi
         /// </summary>
         private async void InitializeWindow()
         {
-            ApplicationView.PreferredLaunchViewSize = new Size { Height = 460 , Width = 570 };
+            ApplicationView.PreferredLaunchViewSize = new Size { Height = 580 , Width = 570 };
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 460, Width = 570 });
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 460, Width = 570 });
+            ApplicationView.GetForCurrentView().TryResizeView(new Size { Height = 580, Width = 570 });
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Height = 580, Width = 570 });
 
             // Fill dropdown lists for modifiers
             comboBoxMod1.ItemsSource = Enum.GetNames(typeof(VirtualKey));
@@ -303,11 +303,11 @@ namespace EliteUi
                             vibration.LeftTrigger = value * config.ScaleFactorLeftTriggerMotor / 100.0f;
                             gamepad.Vibration = vibration;
                         }
-                        else
-                        {
-                            vibration.LeftTrigger = 0.0;
-                            gamepad.Vibration = vibration;
-                        }
+                    }
+                    else
+                    {
+                        vibration.LeftTrigger = 0.0;
+                        gamepad.Vibration = vibration;
                     }
 
                     if (reading.RightTrigger != 0.0)
@@ -318,11 +318,11 @@ namespace EliteUi
                             vibration.RightTrigger = value * config.ScaleFactorRightTriggerMotor / 100.0f;
                             gamepad.Vibration = vibration;
                         }
-                        else
-                        {
-                            vibration.RightTrigger = 0.0;
-                            gamepad.Vibration = vibration;
-                        }
+                    }
+                    else
+                    {
+                        vibration.RightTrigger = 0.0;
+                        gamepad.Vibration = vibration;
                     }
                 }
             }

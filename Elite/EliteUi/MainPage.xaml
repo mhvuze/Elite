@@ -5,7 +5,7 @@
     xmlns:local="using:EliteUi"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Width="570" Height="460">
+    mc:Ignorable="d" Width="570" Height="580">
     <Page.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
@@ -80,7 +80,7 @@
         </Style>
     </Page.Resources>
 
-    <RelativePanel Background="Black" MinWidth="570" MinHeight="460" Height="460" Margin="0">
+    <RelativePanel Background="Black" MinWidth="570" MinHeight="460" Height="580">
         <Grid x:Name="ControllerConfiguration0" Background="#000000" MinHeight="220" Margin="0,10,0,10" MinWidth="320" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10"/>
@@ -116,7 +116,7 @@
                 <TextBlock Text="Bottom Right" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
         </Grid>
-        <Grid x:Name="ControllerReadings0" Background="Black" MinHeight="150" Margin="10,63,10,-53" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" >
+        <Grid x:Name="ControllerReadings0" Background="Black" MinHeight="150" Margin="10,63,10,-53" MinWidth="300" RelativePanel.Below="ControllerConfiguration0" Height="250" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="120"/>
                 <ColumnDefinition MinWidth="180"/>

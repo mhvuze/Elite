@@ -1,19 +1,18 @@
 # Elite
 
-This is a hacky workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about saqneo's - the original author - experience creating the app, [visit his blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
+This is a workaround for mapping the Elite Controller paddles to keys. This should help when using tools like Auto Hotkey or simply avoiding the "quick save reach". To read about saqneo's - the original author - experience creating the app, [visit his blog](http://shawnquereshi.com/2016/02/binding-the-elite-controller-paddles-to-the-keyboard/).
 
-helifax simplified the deployment process and added support for [Windows 10 Anniversary Update building](https://github.com/helifax/Elite-Enhanced/commit/f22f51abc60b0f1d67b8f8048d1aa1343a193760) but I ran into some issues using his fork so I merged the necessary changes here and built on top of that.
+helifax simplified the deployment process and added support for [Windows 10 Anniversary Update building](https://github.com/helifax/Elite-Enhanced/commit/f22f51abc60b0f1d67b8f8048d1aa1343a193760) but I ran into some issues using his fork so I merged the necessary changes here and built on top of that to create a version that works flawless for me.
 
 ### Changes to original
-* Builds and works on Windows 10 Anniversary Update
 * Includes support for modifier / second keys (very useful for Shadowplay etc.)
-* Writes and reads a configuration file for extra comfort
-* Loads last saved configuration at launch
+* Includes support for trigger vibration (implementation by helifax)
+* Includes full profile management support for multiple configurations
+* Builds and works on Windows 10 Anniversary Update
 * Updated look of UI and icons to the Xbox Elite vibe
 * Service Host starts minimized
-* Includes full profile management support for multiple configurations
 
-![alt tag](https://vgy.me/iMn5rf.png)
+![alt tag](http://i.imgur.com/DSkl0If.png)
 
 ### Installation for end users
 * Make sure you have the latst version of the Xbox Device app installed from the Windows Store
@@ -24,7 +23,10 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 ### Usage
 * Run ElitePaddlesServiceHost.exe
 * Run ElitePaddles app
-* Configure buttons to your liking and save the config as default or seperate profile
+* Configure buttons to your liking
+* Click on "Apply Modifiers" if you modified the second key / modifier column
+* Click on "Toggle Vibration" to turn trigger vibration on or off
+* Save the config as default or seperate profile for easy access in the future
 * Enjoy
 
 ### Usage Notes
@@ -32,6 +34,14 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 * Multiple Xbox One Elite Controllers are not supported
 
 =========================================================================
+
+### Sharing configurations
+* The configuration files are tiny and stored in %userprofile%\AppData\Local\Packages\ElitePaddles_dnafrf5v1hgqa\LocalState
+* You are free to manually delete them or copy-paste your friends profiles.
+
+=========================================================================
+
+This segment is solely intended for experienced users who want to customize the project or build it on their own.
 
 ### Building Prerequisites
 * Xbox Accessories App
@@ -55,8 +65,10 @@ helifax simplified the deployment process and added support for [Windows 10 Anni
 
 ### Planned features and known issues
 * Feature: Service Host Autostart
-* Feature: Trigger Vibration from helifax fork
 * Feature: Update profile list after saving automatically (currently: right-click on combobox to refresh)
+* Feature: Apply modifier keys automatically after change
+* UI: Toggle Switch for trigger vibration
+* UI: Clean up stat output
 * Default drive for Windows Store Apps has to be Windows installation drive, otherwise install will fail (good job M$)
 * Multiple gamepads unsupported
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
