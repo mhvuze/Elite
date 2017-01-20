@@ -117,6 +117,8 @@ namespace EliteUi
 
         private string measurementId { get; set; } = "No readings yet.";
         private string measurementValue { get; set; } = "";
+        private Color serviceStatusColor = Colors.Yellow;
+        private string serviceStatus = "Not connected to helper service.";
 
         /// <summary>
         /// Updates the UI bindings on the main thread
@@ -525,20 +527,47 @@ namespace EliteUi
         /// Sends a key down signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyDown(VirtualKey key, VirtualKey modKey)
+        private async void SendKeyDown(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyDownAsync((ushort)key, (ushort)modKey);
+            try
+            {
+                await this.service.SendKeyDownAsync((ushort)key, (ushort)modKey);
+                this.serviceStatusColor = Colors.Green;
+                this.serviceStatus = "Connected to helper service.";
+
+            }
+            catch (Exception ex)
+            {
+                this.serviceStatusColor = Colors.Red;
+                this.serviceStatus = "Failed to send key down.\n" + ex.Message;
+            } finally
+            {
+                UpdateBindings();
+            }
         }
 
         /// <summary>
         /// Sends a key up signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyUp(VirtualKey key, VirtualKey modKey)
+        private async void SendKeyUp(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyUpAsync((ushort)key, (ushort)modKey);
+            try
+            {
+                await this.service.SendKeyUpAsync((ushort)key, (ushort)modKey);
+                this.serviceStatusColor = Colors.Green;
+                this.serviceStatus = "Connected to helper service.";
+
+            } catch(Exception ex)
+            {
+                this.serviceStatusColor = Colors.Red;
+                this.serviceStatus = "Failed to send key up.\n" + ex.Message;
+            } finally
+            {
+                UpdateBindings();
+            }
         }
 
         #endregion

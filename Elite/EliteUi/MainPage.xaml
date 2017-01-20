@@ -154,5 +154,10 @@
         <Button x:Name="buttonSaveProfile" Content="Save As..." HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="157" Margin="337,365,-411.667,-367" Background="Black" Foreground="White" Click="buttonSaveProfile_Click" BorderBrush="#FF3A3A3A"/>
         <Button x:Name="buttonDeleteProfile" Content="X" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="38" Margin="502,365,-457.667,-367" Background="Black" Foreground="White" BorderBrush="#FF3A3A3A" Click="buttonDeleteProfile_Click"/>
         <ToggleSwitch Header="Vibration" IsOn="{x:Bind Path=VibrationEnabled}" Margin="46,0,-103,-290"  Toggled="ToggleVibration" RequestedTheme="Dark" HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Height="60" />
+        <Ellipse HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="20" Margin="520,533,-520,-533" ToolTipService.ToolTip="{x:Bind Path=serviceStatus}">
+            <Ellipse.Fill>
+                <SolidColorBrush Color="{x:Bind Path=serviceStatusColor}" />
+            </Ellipse.Fill>
+        </Ellipse>
     </RelativePanel>
 </Page>
