@@ -1,5 +1,5 @@
 param (
-    [string]$user = "$env:userdomain\$env:username",
+    [string]$user = "$env:userdomain\$env:username"
  )
 # Acquire admin
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -ArgumentList -user $user" -Verb RunAs; exit }
