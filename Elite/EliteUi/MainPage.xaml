@@ -131,22 +131,21 @@
                 <RowDefinition MinHeight="40" />
                 <RowDefinition MinHeight="40" />
             </Grid.RowDefinitions>-->
-            <TextBlock x:Name="measurementId" Grid.Column="0" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="20,10,10,10" />
-            <TextBlock x:Name="measurementValue" Grid.Column="1" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="10,10,20,10" />
+            <TextBlock Grid.Column="0" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="20,10,10,10" Text="{x:Bind measurementId}" />
+            <TextBlock Grid.Column="1" FontSize="12" FontFamily="Segoe UI" Foreground="White" Margin="10,10,20,10" Text="{x:Bind measurementValue}" />
         </Grid>
-        <Button x:Name="buttonSave" Content="Save Config" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="120" Margin="33,235,-88.667,-237" Background="Black" Foreground="White" Click="buttonSave_Click" BorderBrush="#FF3A3A3A"/>
-        <Button x:Name="buttonReload" Content="Reload Config" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="120" Margin="158,235,-278,-237" Background="Black" Foreground="White" Click="buttonReload_Click" BorderBrush="#FF3A3A3A"/>
-        <ComboBox x:Name="comboBoxMod1" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,63,-476,-69">
+        <Button x:Name="buttonSave" Content="Save Profile" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="203" Margin="337,406,-476,-408" Background="Black" Foreground="White" Click="buttonSave_Click" BorderBrush="#FF3A3A3A"/>
+        <Button x:Name="buttonReload" Content="Reload Profile" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="203" Margin="337,447,-540,-449" Background="Black" Foreground="White" Click="buttonReload_Click" BorderBrush="#FF3A3A3A"/>
+        <ComboBox x:Name="comboBoxMod1" Tag="1"  HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,63,-476,-69" SelectionChanged="modifier_SelectionChanged">
             <ListView x:Name="listView" Height="100" Width="100"/>
         </ComboBox>
-        <Button x:Name="buttonMods" Content="Apply Modifiers" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="124" Margin="416,235,-496.667,-237" Background="Black" Foreground="White" Click="buttonMods_Click" BorderBrush="#FF3A3A3A" RenderTransformOrigin="0.056,0.694"/>
-        <ComboBox x:Name="comboBoxMod2" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,103,-476,-109">
+        <ComboBox x:Name="comboBoxMod2" Tag="2" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,103,-476,-109" SelectionChanged="modifier_SelectionChanged">
             <ListView x:Name="listView1" Height="100" Width="100"/>
         </ComboBox>
-        <ComboBox x:Name="comboBoxMod3" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,143,-476,-149">
+        <ComboBox x:Name="comboBoxMod3" Tag="3" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,143,-476,-149" SelectionChanged="modifier_SelectionChanged">
             <ListView x:Name="listView2" Height="100" Width="100"/>
         </ComboBox>
-        <ComboBox x:Name="comboBoxMod4" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,183,-476,-189">
+        <ComboBox x:Name="comboBoxMod4" Tag="4" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="245" Margin="295,183,-476,-189" SelectionChanged="modifier_SelectionChanged">
             <ListView x:Name="listView3" Height="100" Width="100"/>
         </ComboBox>
         <TextBlock Text="Modifier / Second Key" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="337,30,-335.667,-30" />
@@ -154,6 +153,6 @@
         <TextBlock Text="Profile Selection" FontFamily="Segoe UI" Foreground="White" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="337,303,-337.667,-303" />
         <Button x:Name="buttonSaveProfile" Content="Save As..." HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="157" Margin="337,365,-411.667,-367" Background="Black" Foreground="White" Click="buttonSaveProfile_Click" BorderBrush="#FF3A3A3A"/>
         <Button x:Name="buttonDeleteProfile" Content="X" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="38" Margin="502,365,-457.667,-367" Background="Black" Foreground="White" BorderBrush="#FF3A3A3A" Click="buttonDeleteProfile_Click"/>
-        <Button x:Name="buttonVibration" Content="Toggle Vibration" HorizontalAlignment="Left" Height="36" VerticalAlignment="Top" Width="128" Margin="283,235,-353.667,-237" Background="Black" Foreground="White" Click="buttonVibration_Click" BorderBrush="#FF3A3A3A"/>
+        <ToggleSwitch Header="Vibration" IsOn="{x:Bind Path=VibrationEnabled}" Margin="46,0,-103,-290"  Toggled="ToggleVibration" RequestedTheme="Dark" HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Height="60" />
     </RelativePanel>
 </Page>
