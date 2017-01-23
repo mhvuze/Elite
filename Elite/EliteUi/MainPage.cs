@@ -24,6 +24,7 @@ namespace EliteUi
     // my additions
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.IO;
+    using System.Diagnostics;
 
     /// <summary>
     /// The non-generated part of the main application.
@@ -35,7 +36,7 @@ namespace EliteUi
     {
         // variables
         Windows.Storage.StorageFolder configFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-        static bool VibrationEnabled = false;
+        bool VibrationEnabled { get; set; } = false;
 
         /// <summary>
         /// The service URI
@@ -109,6 +110,23 @@ namespace EliteUi
         /// Whether clearing is being deferred (used for assigning spacebar)
         /// </summary>
         private bool deferringClear = false;
+
+        #endregion
+
+        #region View Helpers
+
+        private string measurementId { get; set; } = "No readings yet.";
+        private string measurementValue { get; set; } = "";
+        private Color serviceStatusColor = Colors.Yellow;
+        private string serviceStatus = "Not connected to helper service.";
+
+        /// <summary>
+        /// Updates the UI bindings on the main thread
+        /// </summary>
+        private void UpdateBindings()
+        {
+            Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { Bindings.Update(); }).AsTask();
+        }
 
         #endregion
 
@@ -280,51 +298,9 @@ namespace EliteUi
                     return;
                 }
 
-                this.WriteGamepadReadings(reading);
-                this.ProcessGamepadReadings(reading);
-
-                // Vibration
-                {
-                    Windows.Gaming.Input.Gamepad gamepad = Windows.Gaming.Input.Gamepad.Gamepads.First();
-                    Windows.Gaming.Input.GamepadVibration vibration;
-                    EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
-
-                    vibration.LeftMotor = 0.0;
-                    vibration.LeftTrigger = 0.0;
-                    vibration.RightMotor = 0.0;
-                    vibration.RightTrigger = 0.0;
-
-                    // Set vibration
-                    if (reading.LeftTrigger != 0.0)
-                    {
-                        if (VibrationEnabled == true)
-                        {
-                            double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
-                            vibration.LeftTrigger = value * config.ScaleFactorLeftTriggerMotor / 100.0f;
-                            gamepad.Vibration = vibration;
-                        }
-                    }
-                    else
-                    {
-                        vibration.LeftTrigger = 0.0;
-                        gamepad.Vibration = vibration;
-                    }
-
-                    if (reading.RightTrigger != 0.0)
-                    {
-                        if (VibrationEnabled == true)
-                        {
-                            double value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
-                            vibration.RightTrigger = value * config.ScaleFactorRightTriggerMotor / 100.0f;
-                            gamepad.Vibration = vibration;
-                        }
-                    }
-                    else
-                    {
-                        vibration.RightTrigger = 0.0;
-                        gamepad.Vibration = vibration;
-                    }
-                }
+                WriteGamepadReadings(reading);
+                ProcessGamepadReadings(reading);
+                UpdateVibrations(reading);
             }
             catch (Exception)
             {
@@ -333,6 +309,57 @@ namespace EliteUi
             finally
             {
                 Monitor.Exit(this.timerLock);
+            }
+        }
+
+        /// <summary>
+        /// Updates vibration motors based on trigger readings
+        /// </summary>
+        /// <param name="reading">The reading.</param>
+        private void UpdateVibrations(GamepadReading reading)
+        {
+            Windows.Gaming.Input.Gamepad gamepad = Windows.Gaming.Input.Gamepad.Gamepads.FirstOrDefault();
+            if (gamepad == default(Windows.Gaming.Input.Gamepad))
+            {
+                return;
+            }
+            Windows.Gaming.Input.GamepadVibration vibration;
+            EliteGamepadConfiguration config = this.gamepad.gamepad.GetConfiguration(this.gamepad.CurrentSlotId);
+
+            vibration.LeftMotor = 0.0;
+            vibration.LeftTrigger = 0.0;
+            vibration.RightMotor = 0.0;
+            vibration.RightTrigger = 0.0;
+
+            // Set vibration
+            if (reading.LeftTrigger != 0.0)
+            {
+                if (VibrationEnabled == true)
+                {
+                    double value = normalizeTriggerValue(reading.LeftTrigger, config.LeftTrigger.Min / 10, config.LeftTrigger.Max / 10);
+                    vibration.LeftTrigger = value * config.ScaleFactorLeftTriggerMotor / 100.0f;
+                    gamepad.Vibration = vibration;
+                }
+            }
+            else
+            {
+                vibration.LeftTrigger = 0.0;
+                gamepad.Vibration = vibration;
+            }
+
+            if (reading.RightTrigger != 0.0)
+            {
+                if (VibrationEnabled == true)
+                {
+                    double value = normalizeTriggerValue(reading.RightTrigger, config.RightTrigger.Min / 10, config.RightTrigger.Max / 10);
+                    vibration.RightTrigger = value * config.ScaleFactorRightTriggerMotor / 100.0f;
+                    gamepad.Vibration = vibration;
+                }
+            }
+            else
+            {
+                vibration.RightTrigger = 0.0;
+                gamepad.Vibration = vibration;
             }
         }
 
@@ -409,9 +436,10 @@ namespace EliteUi
             valueStringBuilder.AppendLine(value.ToString());
             propertyStringBuilder.AppendLine("VibrationValueRight");
 
-            var task = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementId.Text = propertyStringBuilder.ToString(); }).AsTask();
-            var task2 = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { measurementValue.Text = valueStringBuilder.ToString(); }).AsTask();
-            Task.WaitAll(task, task2);
+            // set strings used in UI
+            measurementId = propertyStringBuilder.ToString();
+            measurementValue = valueStringBuilder.ToString();
+            UpdateBindings();
         }
 
         /// <summary>
@@ -499,20 +527,47 @@ namespace EliteUi
         /// Sends a key down signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyDown(VirtualKey key, VirtualKey modKey)
+        private async void SendKeyDown(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyDownAsync((ushort)key, (ushort)modKey);
+            try
+            {
+                await this.service.SendKeyDownAsync((ushort)key, (ushort)modKey);
+                this.serviceStatusColor = Colors.Green;
+                this.serviceStatus = "Connected to helper service.";
+
+            }
+            catch (Exception ex)
+            {
+                this.serviceStatusColor = Colors.Red;
+                this.serviceStatus = "Failed to send key down.\n" + ex.Message;
+            } finally
+            {
+                UpdateBindings();
+            }
         }
 
         /// <summary>
         /// Sends a key up signal.
         /// </summary>
         /// <param name="key">The key.</param>
-        private void SendKeyUp(VirtualKey key, VirtualKey modKey)
+        private async void SendKeyUp(VirtualKey key, VirtualKey modKey)
         {
             this.EnsureServiceInitialized();
-            this.service.SendKeyUpAsync((ushort)key, (ushort)modKey);
+            try
+            {
+                await this.service.SendKeyUpAsync((ushort)key, (ushort)modKey);
+                this.serviceStatusColor = Colors.Green;
+                this.serviceStatus = "Connected to helper service.";
+
+            } catch(Exception ex)
+            {
+                this.serviceStatusColor = Colors.Red;
+                this.serviceStatus = "Failed to send key up.\n" + ex.Message;
+            } finally
+            {
+                UpdateBindings();
+            }
         }
 
         #endregion
@@ -543,17 +598,23 @@ namespace EliteUi
             comboBoxMod4.SelectedItem = Enum.GetName(typeof(VirtualKey), assignedModButtons[GamepadButtons.Aux4]);
         }
 
-        // Apply modifiers
-        private void buttonMods_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        // Apply a modifier
+        private void modifier_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            assignedModButtons[GamepadButtons.Aux1] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod1.SelectedItem).ToString());
-            assignedModButtons[GamepadButtons.Aux2] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod2.SelectedItem).ToString());
-            assignedModButtons[GamepadButtons.Aux3] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod3.SelectedItem).ToString());
-            assignedModButtons[GamepadButtons.Aux4] = (VirtualKey)Enum.Parse(typeof(VirtualKey), (comboBoxMod4.SelectedItem).ToString());
+            var combo = sender as ComboBox;
+            var selected = (VirtualKey)Enum.Parse(typeof(VirtualKey), (combo.SelectedItem).ToString());
+            switch (combo.Tag.ToString())
+            {
+                case "1": assignedModButtons[GamepadButtons.Aux1] = selected; break;
+                case "2": assignedModButtons[GamepadButtons.Aux2] = selected; break;
+                case "3": assignedModButtons[GamepadButtons.Aux3] = selected; break;
+                case "4": assignedModButtons[GamepadButtons.Aux4] = selected; break;
+
+            }
         }
 
         // Toggle vibration
-        private void buttonVibration_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void ToggleVibration(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             VibrationEnabled = !VibrationEnabled;
         }

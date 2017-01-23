@@ -53,7 +53,7 @@ This segment is solely intended for experienced users who want to customize the 
 1. Clone the repo
 2. Download the nuget command-line utility (https://docs.nuget.org/consume/installing-nuget)
 3. Run nuget restore, targetting Elite.sln (e.g. "nuget.exe restore Elite.sln")
-4. Run Generate_Certificate.bat (if you are asked for a password, it's 'passWD')
+4. Run Generate_Certificate.bat (Enter the same password every time)
 5. Open the solution in Visual Studio
 6. Edit Package.appxmanifest and point to the certificate
 7. Rebuild project in debug mode (!) for your target platform
@@ -66,11 +66,11 @@ This segment is solely intended for experienced users who want to customize the 
 ### Planned features and known issues
 * Feature: Service Host Autostart
 * Feature: Update profile list after saving automatically (currently: right-click on combobox to refresh)
-* Feature: Apply modifier keys automatically after change
-* UI: Toggle Switch for trigger vibration
 * UI: Clean up stat output
 * Default drive for Windows Store Apps has to be Windows installation drive, otherwise install will fail (good job M$)
 * Multiple gamepads unsupported
 * Some keys cannot be mapped by the app because they select the buttons instead (e.g. Enter and gamepad "A")
-* Poor error handling/diagnostic ability, for instance when service is not running
 * VS bug: Will throw exitcode -1073740791 during EliteUi compilation if using German language, switching to English fixes this (MS is aware, might be fixed soon-ish). Download ENU pack from [here](https://www.microsoft.com/en-US/download/details.aspx?id=48157)
+
+### Limitations
+The service host need to be a GUI application (not a service) because services can't use SendInput.
